@@ -691,7 +691,7 @@ Primera pregunta:
 } Tu vida actual es {say {LinkHP}}
 La vida de Mido es {say {MidoHP}}
 Siguiente pregunta:
-¿Cual de los dosaventureros se enfrentó a un mono en 2024?{p}
+¿Cual de los dos aventureros se enfrentó a un mono en 2024?{p}
 {choice
   - Gemma
     {choice2 = "Gemma"}{MidoHP = MidoHP - 1}
@@ -775,7 +775,7 @@ Primera pregunta...
     Correcto!
   - choiceGanon1 == "2016" ?
     Incorrecto!
-Segunda pregunta...
+}Segunda pregunta...
 ¿Cual es el anime favorito de Gemma?{p}
 {choice
   - One Piece
@@ -787,7 +787,7 @@ Segunda pregunta...
     Incorrecto!
   - choiceGanon2 == "Bola de Drac" ?
     Correcto!
-¿Y para Alex, cual es su saga de juegos favorita?{p}
+}¿Y para Alex, cual es su saga de juegos favorita?{p}
 {choice
   - The Legend of Zelda
     {choiceGanon3 = "The Legend of Zelda"}
@@ -812,7 +812,7 @@ De momento vas muy bien, pero aun queda mucho por hacer
     Correcto, y alli siguen.
   - choiceGanon4 == "Sant Adria del Besos" ?
     Incorrecto!
-¿Que raza de perro quieren tener en un futuro cercano?{p}
+}¿Que raza de perro quieren tener en un futuro cercano?{p}
 {choice
   - Bichon Maltes
     {choiceGanon5 = "Bichon Maltes"}{LinkHP = LinkHP - 1}
@@ -823,7 +823,7 @@ De momento vas muy bien, pero aun queda mucho por hacer
     Incorrecto!
   - choiceGanon5 == "Shiba Inu" ?
     Correcto, y probablemente se llame Itachi.
-Ya va quedando menos, aumentamos la dificultad.
+}Ya va quedando menos, aumentamos la dificultad.
 ¿Cuales son sus galletas favoritas?{p}
 {choice
   - Galletas Principe
@@ -835,7 +835,7 @@ Ya va quedando menos, aumentamos la dificultad.
     Incorrecto.
   - choiceGanon6 == "Galletas Dinosaurio" ?
     Correcto, siempre dino gorron. 
-¿Que numero de dorsal de basquet han llevado nuestros aventureros?{p}
+}¿Que numero de dorsal de basquet han llevado nuestros aventureros?{p}
 {choice
   - El 14
     {choiceGanon7 = "El 14"}
@@ -846,7 +846,7 @@ Ya va quedando menos, aumentamos la dificultad.
     Correcto!
   - choiceGanon7 == "El 11" ?
     Incorrecto!
-Pregunta numero 8.
+}Pregunta numero 8.
 ¿Quien odia más perder?{p}
 {choice
   - Alex
@@ -858,7 +858,7 @@ Pregunta numero 8.
     Que va, Gemma es mucho peor
   - choiceGanon8 == "Gemma" ?
     Correcto, no hay nadie mas competitiva que ella.
-¿Como resuelven las situaciones que ninguno de los dos quiere hacer?{p}
+}¿Como resuelven las situaciones que ninguno de los dos quiere hacer?{p}
 {choice
   - Jugando al piedra, papel, tijeras
     {choiceGanon9 = "Jugando al piedra, papel, tijeras"}
@@ -869,7 +869,7 @@ Pregunta numero 8.
     Correcto!
   - choiceGanon9 == "Siempre lo acaba haciendo Alex" ?
     Incorrecto!
-Ultima poregunta!
+}Ultima poregunta!
 ¿Quien lleva la correa en la relacion?{p}
 {choice
   - Alex
@@ -14430,7 +14430,60 @@ exports.hackOptions = hackOptions;
 </script>
 
 <script type="text/javascript" id="borksyAdditionalJS">
+(function () {
+	// ── CONFIGURA AQUÍ ──
+	var SONG_MAIN  = 'zelda_main.mp3';   // canción para salas 0-5
+	var SONG_FINAL = 'zelda_final.mp3';  // canción para la última sala
+	var FINAL_ROOM = '6';               // ID de la Cueva de Ganon
+	var VOLUME     = 0.5;               // volumen 0.0 – 1.0
+	// ─────────────────────
 
+	var audioMain  = new Audio(SONG_MAIN);
+	var audioFinal = new Audio(SONG_FINAL);
+	audioMain.loop  = true;
+	audioFinal.loop = true;
+	audioMain.volume  = VOLUME;
+	audioFinal.volume = VOLUME;
+
+	var current  = null;
+	var unlocked = false;
+	var lastRoom = null;
+
+	function switchSong(roomId) {
+		// == en vez de === para cubrir '6' vs 6
+		var target = (roomId == FINAL_ROOM) ? audioFinal : audioMain;
+		if (current === target) return;
+		if (current) { current.pause(); current.currentTime = 0; }
+		current = target;
+		if (unlocked) {
+			current.play().catch(function () {});
+		}
+	}
+
+	// Los navegadores bloquean autoplay hasta la primera interacción.
+	function unlock() {
+		if (unlocked) return;
+		unlocked = true;
+		if (current) {
+			current.play().catch(function () {});
+		} else if (typeof state !== 'undefined' && state.room != null) {
+			switchSong(state.room);
+		}
+	}
+
+	document.addEventListener('keydown',     unlock, { once: true });
+	document.addEventListener('pointerdown', unlock, { once: true });
+
+	// Comprueba el cambio de sala cada 300 ms (robusto ante cualquier
+	// problema de scope con onInitRoom).
+	setInterval(function () {
+		if (typeof state === 'undefined' || state.room == null) return;
+		if (state.room !== lastRoom) {
+			lastRoom = state.room;
+			switchSong(state.room);
+		}
+	}, 300);
+})();
 </script>
 
 </head>
