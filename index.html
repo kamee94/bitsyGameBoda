@@ -9123,7 +9123,7 @@ function onready(startWithTitle) {
 	bitsy.log("game ready!");
 
 	if (startWithTitle === undefined || startWithTitle === null) {
-		startWithTitle = true;
+		startWithTitle = false; // la pantalla de título propia sustituye a la original
 	}
 
 	if (startWithTitle) { // used by editor 
@@ -15234,10 +15234,14 @@ exports.hackOptions = hackOptions;
 	}
 	function dismiss() {
 		if (done) return; done = true;
-		ov.classList.add('hide');
-		setTimeout(function () { key('keydown'); }, 120);
-		setTimeout(function () { key('keyup'); }, 260);
-		setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 700);
+		// La pantalla sigue tapando el título antiguo hasta que el motor lo cierra
+		var t0 = Date.now();
+		(function wait() {
+			if (window.isNarrating === false || Date.now() - t0 > 2500) {
+				ov.classList.add('hide');
+				setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 700);
+			} else setTimeout(wait, 40);
+		})();
 		window.removeEventListener('keydown', onKey, true);
 		window.removeEventListener('keyup', onKey, true);
 	}
