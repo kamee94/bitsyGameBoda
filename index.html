@@ -13,7 +13,7 @@
 <title>My Bitsy Game By Me</title>
 
 <script type="text/bitsyGameData" id="exportedGameData">
-The wedding of time
+THE WEDDING OF TIME
 
 # BITSY VERSION 8.15
 
@@ -632,12 +632,12 @@ NAME Trifuerza de la Sabiduria
 
 DLG 3
 """
-¡Hey listen! ¡Despierta, heroe... ¡por fin!
+¡Hey listen! ¡Despierta, héroe... ¡por fin!
 Durante años, dos aventureros han recorrido juntos diferentes 
-mundos,acumulando recuerdos, encontrando aliados 
+mundos, acumulando recuerdos, encontrando aliados 
 y escribiendo su propia historia. 
 
-Pero el tiempo pasa...Y algunos de esos recuerdos se han perdido.
+Pero el tiempo pasa... Y algunos de esos recuerdos se han perdido.
 
 La Trifuerza, guardiana de su historia, también se ha fragmentado.
 ¡Ayudalos a recuperarlos!
@@ -665,15 +665,14 @@ NAME Espada Maestra que repele el mal dialog
 
 DLG 7
 """
-¡Alto ahi, viajero!{p}
+¡Alto ahí, viajero!{p}
 Soy Mido, guardian del bosque.
 ¿Quién te ha dejado entrar en el bosque?
 ...
-¿Que vienes a recuperar los recuerdos de dos aventureros?
-¡Ja! ¡Eso dicen todos!
+¿Vienes a recuperar los recuerdos de dos aventureros?
 Si quieres avanzar, tendrás que demostrar que conoces su historia.
 Te haré 3 sencillas preguntas.
-Respondelas todas bien y quizas te ayude.
+Respóndelas todas bien y quizas te ayude.
 Si fallas aunque sea una, no tendras premio.
 ¿Estas listo?
 Primera pregunta:
@@ -713,7 +712,7 @@ Y ultima pregunta:
     {choice3 = "Si"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choice3}}{
   - choice3 == "No" ?
-    Correcto! Nadie les saca de sus tortitas
+    Correcto! Nadie les saca de sus tortitas.
   - choice3 == "Si" ?
     Incorrecto!
 } Tu vida actual es {say {LinkHP}}
@@ -727,7 +726,7 @@ La vida de Mido es {say {MidoHP}}{
       - else ?
         {
           - {MidoHP} == 0 ?
-            Has derrotado a Mido
+            . Has derrotado a Mido
             Hay una nota en el suelo: [He visto algo util al sur del bosque. Ve y explora]
           - else ?
             {end}
@@ -739,7 +738,7 @@ NAME Mido dialog
 
 DLG 9
 """
-¡Has encontrado el escudo Hyliano!{LinkHP = LinkHP + 5}Has augmentado tus puntos de vida.
+¡Has encontrado el escudo Hyliano!{LinkHP = LinkHP + 5} Has augmentado tus puntos de vida.
 Tu vida actual es {say {LinkHP}}
 
 """
@@ -763,8 +762,8 @@ La ultima pieza de la Trifuerza esta en mi poder.
 Demúestralo.
 Tu vida actual es {say {LinkHP}}
 {wvy}MHWAHAHAHA{wvy}
-Primera pregunta...
-¿A que año empezaron a salir nuestros aventureros?{p}
+--- PREGUNTA 1 de 10 ---
+¿Qué año empezaron a salir nuestros aventureros?{p}
 {choice
   - 2015
     {choiceGanon1 = "2015"}
@@ -772,11 +771,11 @@ Primera pregunta...
     {choiceGanon1 = "2016"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choiceGanon1}}{
   - choiceGanon1 == "2015" ?
-    Correcto!
+    . Correcto!
   - choiceGanon1 == "2016" ?
-    Incorrecto!
-}Segunda pregunta...
-¿Cual es el anime favorito de Gemma?{p}
+    . Incorrecto!
+}{p}--- PREGUNTA 2 de 10 ---
+¿Cuál es el anime favorito de Gemma?{p}
 {choice
   - One Piece
     {choiceGanon2 = "One Piece"}{LinkHP = LinkHP - 1}
@@ -784,10 +783,11 @@ Primera pregunta...
     {choiceGanon2 = "Bola de Drac"}
 }Tu respuesta ha sido... {say {choiceGanon2}}{
   - choiceGanon2 == "One Piece" ?
-    Incorrecto!
+    . Incorrecto!
   - choiceGanon2 == "Bola de Drac" ?
-    Correcto!
-}¿Y para Alex, cual es su saga de juegos favorita?{p}
+    . Correcto!
+}{p}--- PREGUNTA 3 de 10 ---
+¿Y para Alex, cuál es su saga de juegos favorita?{p}
 {choice
   - The Legend of Zelda
     {choiceGanon3 = "The Legend of Zelda"}
@@ -795,13 +795,13 @@ Primera pregunta...
     {choiceGanon3 = "Mario Bros"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choiceGanon3}}{
   - choiceGanon3 == "The Legend of Zelda" ?
-    Correcto!
+    . Correcto!
   - choiceGanon3 == "Mario Bros" ?
-    Incorrecto!
-}Tu vida actual es {say {LinkHP}}
-De momento vas muy bien, pero aun queda mucho por hacer
---- PREGUNTA 4 de 10 ---
-¿Donde se fueron a vivir juntos?{p}
+    . Incorrecto!
+} Tu vida actual es {say {LinkHP}}
+De momento vas muy bien, pero aún queda mucho por hacer.
+{p}--- PREGUNTA 4 de 10 ---
+¿Dónde se fueron a vivir juntos?{p}
 {choice
   - Badalona
     {choiceGanon4 = "Badalona"}
@@ -809,10 +809,11 @@ De momento vas muy bien, pero aun queda mucho por hacer
     {choiceGanon4 = "Sant Adria del Besos"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choiceGanon4}}{
   - choiceGanon4 == "Badalona" ?
-    Correcto, y alli siguen.
+    . Correcto, y alli siguen.
   - choiceGanon4 == "Sant Adria del Besos" ?
-    Incorrecto!
-}¿Que raza de perro quieren tener en un futuro cercano?{p}
+    . Incorrecto!
+}{p}--- PREGUNTA 5 de 10 ---
+¿Qué raza de perro quieren tener en un futuro cercano?{p}
 {choice
   - Bichon Maltes
     {choiceGanon5 = "Bichon Maltes"}{LinkHP = LinkHP - 1}
@@ -820,11 +821,12 @@ De momento vas muy bien, pero aun queda mucho por hacer
     {choiceGanon5 = "Shiba Inu"}
 }Tu respuesta ha sido... {say {choiceGanon5}}{
   - choiceGanon5 == "Bichon Maltes" ?
-    Incorrecto!
+    . Incorrecto!
   - choiceGanon5 == "Shiba Inu" ?
-    Correcto, y probablemente se llame Itachi.
-}Ya va quedando menos, aumentamos la dificultad.
-¿Cuales son sus galletas favoritas?{p}
+    . Correcto!
+}{p}--- PREGUNTA 6 de 10 ---
+Ya va quedando menos, aumentamos la dificultad.
+¿Cuáles son sus galletas favoritas?{p}
 {choice
   - Galletas Principe
     {choiceGanon6 = "Galletas Principe"}{LinkHP = LinkHP - 1}
@@ -832,10 +834,11 @@ De momento vas muy bien, pero aun queda mucho por hacer
     {choiceGanon6 = "Galletas Dinosaurio"}
 }Tu respuesta ha sido... {say {choiceGanon6}}{
   - choiceGanon6 == "Galletas Principe" ?
-    Incorrecto.
+    . Incorrecto.
   - choiceGanon6 == "Galletas Dinosaurio" ?
-    Correcto, siempre dino gorron. 
-}¿Que numero de dorsal de basquet han llevado nuestros aventureros?{p}
+    . Correcto, siempre dino gorron. 
+}{p}--- PREGUNTA 7 de 10 ---
+¿Qué número de dorsal de basquet han llevado nuestros aventureros?{p}
 {choice
   - El 14
     {choiceGanon7 = "El 14"}
@@ -843,11 +846,11 @@ De momento vas muy bien, pero aun queda mucho por hacer
     {choiceGanon7 = "El 11"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choiceGanon7}}{
   - choiceGanon7 == "El 14" ?
-    Correcto!
+    . Correcto!
   - choiceGanon7 == "El 11" ?
-    Incorrecto!
-}Pregunta numero 8.
-¿Quien odia más perder?{p}
+    . Incorrecto!
+}{p}--- PREGUNTA 8 de 10 ---
+¿Quién odia más perder?{p}
 {choice
   - Alex
     {choiceGanon8 = "Alex"}{LinkHP = LinkHP - 1}
@@ -855,10 +858,11 @@ De momento vas muy bien, pero aun queda mucho por hacer
     {choiceGanon8 = "Gemma"}
 }Tu respuesta ha sido... {say {choiceGanon8}}{
   - choiceGanon8 == "Alex" ?
-    Que va, Gemma es mucho peor
+    . Que va, Gemma es mucho peor
   - choiceGanon8 == "Gemma" ?
-    Correcto, no hay nadie mas competitiva que ella.
-}¿Como resuelven las situaciones que ninguno de los dos quiere hacer?{p}
+    . Correcto, no hay nadie más competitiva que ella.
+}{p}--- PREGUNTA 9 de 10 ---
+¿Cómo resuelven las situaciones que ninguno de los dos quiere hacer?{p}
 {choice
   - Jugando al piedra, papel, tijeras
     {choiceGanon9 = "Jugando al piedra, papel, tijeras"}
@@ -866,11 +870,11 @@ De momento vas muy bien, pero aun queda mucho por hacer
     {choiceGanon9 = "Siempre lo acaba haciendo Alex"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choiceGanon9}}{
   - choiceGanon9 == "Jugando al piedra, papel, tijeras" ?
-    Correcto!
+    . Correcto!
   - choiceGanon9 == "Siempre lo acaba haciendo Alex" ?
-    Incorrecto!
-}Ultima poregunta!
-¿Quien lleva la correa en la relacion?{p}
+    . Incorrecto!
+}{p}--- PREGUNTA 10 de 10 ---
+¿Quién lleva la correa en la relación?{p}
 {choice
   - Alex
     {choiceGanon10 = "Alex"}{LinkHP = LinkHP - 1}
@@ -878,20 +882,21 @@ De momento vas muy bien, pero aun queda mucho por hacer
     {choiceGanon10 = "Gemma"}
 }Tu respuesta ha sido... {say {choiceGanon10}}{
   - choiceGanon10 == "Alex" ?
-    Ya sabes que no...
+    . Ya sabes que no...
   - choiceGanon10 == "Gemma" ?
-    Las mujeres siempre. 
-}{
-  - {LinkHP} > 0 ?
-    TRIFUERZA RESTAURADA
-	MEMORIES RESTORED
+    . Las mujeres siempre.
+}{p}{
+  - LinkHP > 0 ?
+    ¡TRIFUERZA RESTAURADA!{p}
+	MEMORIES RESTORED{pg}
 	Has recuperado nuestra historia.
-	Pero esta aventura todavía no ha terminado...
-	El siguiente recuerdo te espera en el Mas del Silenci.
-	[ENLACE AL QR]
+	{p}Pero esta aventura todavía no ha terminado...
+	{p}El siguiente recuerdo te espera en el Mas del Silenci.
+	{p}¡Nos vemos en la boda el 29/05/2026!{end}
   - else ?
-    Has muerto :(, no eres digno de asistir a la boda {end}
+    Has muerto... Aún no eres digno de asistir a la boda. Prueba otra vez!{end}
 }
+
 """
 NAME Ganon dialog
 
