@@ -1204,8 +1204,8 @@ body {
 
 /* Controles visuales para móvil y pantallas táctiles */
 #touch-controls {
-	--control-size: clamp(78px, 22vmin, 104px);
-	--control-gap: clamp(6px, 2vmin, 10px);
+	--control-size: clamp(120px, 24vmin, 170px);
+	--control-gap: clamp(4px, 1vmin, 8px);
 	position: fixed;
 	/* La posición vertical se calcula por JavaScript para centrar la cruceta
 	   en el margen negro que queda debajo del lienzo. */
@@ -1230,22 +1230,30 @@ body {
 #touch-controls button {
 	width: var(--control-size);
 	height: var(--control-size);
-	border: 3px solid rgba(255, 255, 255, 0.9);
-	border-radius: 20px;
-	background: rgba(0, 0, 0, 0.58);
-	color: #fff;
-	font: 700 clamp(32px, 9vmin, 46px)/1 monospace;
-	box-shadow: 0 6px 0 rgba(255, 255, 255, 0.28);
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
 	touch-action: none;
 	-webkit-tap-highlight-color: transparent;
 	cursor: pointer;
 }
 
-#touch-controls button:active,
-#touch-controls button.is-pressed {
-	transform: translateY(4px);
-	box-shadow: 0 2px 0 rgba(255, 255, 255, 0.22);
-	background: rgba(255, 255, 255, 0.3);
+#touch-controls button svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	shape-rendering: crispEdges;
+	pointer-events: none;
+}
+
+#touch-controls button .cap { transition: none; }
+
+#touch-controls button:active .cap,
+#touch-controls button.is-pressed .cap {
+	transform: translateY(1.5px);
+	filter: brightness(1.25);
 }
 
 #touch-controls .up { grid-column: 2; grid-row: 1; }
@@ -1267,12 +1275,15 @@ body {
 @media (max-width: 360px), (max-height: 480px) {
 	#touch-controls {
 		--control-size: clamp(68px, 20vmin, 82px);
-		--control-gap: 5px;
+		--control-gap: 3px;
 	}
-	#touch-controls button {
-		border-radius: 16px;
-		border-width: 2px;
-	}
+}
+
+/* Oculta la barra blanca del campo de texto invisible (sigue funcionando para escribir) */
+form:has(> input[type="text"]) {
+	opacity: 0 !important;
+	pointer-events: none !important;
+	background: transparent !important;
 }
 
 </style>
@@ -14651,11 +14662,11 @@ exports.hackOptions = hackOptions;
 <!-- CONTROLES VISUALES: cruceta de movimiento -->
 <div id="touch-controls" aria-label="Controles de movimiento">
 	<div class="dpad" aria-label="Movimiento">
-		<button class="up" type="button" data-keycode="38" data-key="ArrowUp" data-code="ArrowUp" aria-label="Mover arriba">▲</button>
-		<button class="left" type="button" data-keycode="37" data-key="ArrowLeft" data-code="ArrowLeft" aria-label="Mover a la izquierda">◀</button>
+		<button class="up" type="button" data-keycode="38" data-key="ArrowUp" data-code="ArrowUp" aria-label="Mover arriba"></button>
+		<button class="left" type="button" data-keycode="37" data-key="ArrowLeft" data-code="ArrowLeft" aria-label="Mover a la izquierda"></button>
 		<span class="center" aria-hidden="true"></span>
-		<button class="right" type="button" data-keycode="39" data-key="ArrowRight" data-code="ArrowRight" aria-label="Mover a la derecha">▶</button>
-		<button class="down" type="button" data-keycode="40" data-key="ArrowDown" data-code="ArrowDown" aria-label="Mover abajo">▼</button>
+		<button class="right" type="button" data-keycode="39" data-key="ArrowRight" data-code="ArrowRight" aria-label="Mover a la derecha"></button>
+		<button class="down" type="button" data-keycode="40" data-key="ArrowDown" data-code="ArrowDown" aria-label="Mover abajo"></button>
 	</div>
 </div>
 
@@ -14801,6 +14812,10 @@ exports.hackOptions = hackOptions;
 #lives-hud .heart { display: block; width: var(--hs); height: var(--hs); }
 #lives-hud .heart svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; image-rendering: pixelated; overflow: visible; }
 #lives-hud .count { font-size: calc(var(--hs) * .86); margin-left: calc(var(--hs) * .1); text-shadow: 0 2px 0 #000; }
+#lives-hud .sep { width: max(2px, calc(var(--hs) * .09)); align-self: stretch; background: rgba(255,255,255,.35); margin: 0 calc(var(--hs) * .12); }
+#lives-hud .itm { display: block; width: var(--hs); height: var(--hs); }
+#lives-hud .itm svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; overflow: visible; }
+#lives-hud .itm.gain svg { animation: heartGain .6s cubic-bezier(.2, 1.5, .4, 1); }
 #lives-hud.flash-loss { border-color: #ff5a5a; }
 #lives-hud.flash-gain { border-color: #ffd84d; }
 #lives-hud.dead { border-color: #ff5a5a; }
@@ -14883,6 +14898,42 @@ exports.hackOptions = hackOptions;
 		}
 		return out + '</svg>';
 	}
+	var ICONS = {
+		'3': ['........','........','...##...','..#wY#..','.#wYYY#.','#wYYYYY#','########','........'],
+		'4': ['...##...','..#wi#..','..#wi#..','..#wi#..','..#wi#..','.#YYYY#.','..#WW#..','..#bb#..'],
+		'5': ['........','.######.','#iiYYjj#','#iiYYjj#','#YYYYYY#','#iiYYjj#','.#iYYj#.','...##...']
+	};
+	var ICON_COL = { '#': '#2a0710', w: '#fff4dc', Y: '#ffcc33', i: '#bfe8ff', j: '#5aa9d6', W: '#c98a52', b: '#8a4a24' };
+	function buildIcon(id) {
+		var rows = ICONS[id], out = '<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
+		for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) {
+			var ch = rows[y].charAt(x);
+			if (ch !== '.') out += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + ICON_COL[ch] + '"/>';
+		}
+		return out + '</svg>';
+	}
+	var ICON_HTML = { '3': buildIcon('3'), '4': buildIcon('4'), '5': buildIcon('5') };
+	var ITEM_IDS = ['3', '4', '5'];
+	var invState = {};
+	var invKey = '';
+	var lastInv = null;
+	function readInv() {
+		var o = {};
+		try {
+			var inv = window.player && window.player().inventory;
+			if (inv) ITEM_IDS.forEach(function (id) { if (inv[id] > 0) o[id] = true; });
+		} catch (e) {}
+		return o;
+	}
+	function itemsHtml(prev) {
+		var h = '';
+		ITEM_IDS.forEach(function (id) {
+			if (!invState[id]) return;
+			var isNew = prev && !prev[id];
+			h += '<span class="itm' + (isNew ? ' gain' : '') + '">' + ICON_HTML[id] + '</span>';
+		});
+		return h ? '<span class="sep"></span>' + h : '';
+	}
 	var HEART_FULL = buildHeart(true);
 	var HEART_EMPTY = buildHeart(false);
 
@@ -14913,7 +14964,8 @@ exports.hackOptions = hackOptions;
 				html += '<span class="' + cls + '">' + (i < shown ? HEART_FULL : HEART_EMPTY) + '</span>';
 			}
 		}
-		hud.innerHTML = html;
+		hud.innerHTML = html + itemsHtml(lastInv);
+		lastInv = invState;
 		hud.setAttribute('aria-label', 'Vidas: ' + shown);
 		hud.classList.toggle('dead', n <= 0);
 	}
@@ -14943,6 +14995,12 @@ exports.hackOptions = hackOptions;
 	function tick() {
 		var n = readLives();
 		if (n === null) { hud.style.display = 'none'; return; }
+		var inv = readInv(), key = ITEM_IDS.filter(function (i) { return inv[i]; }).join();
+		if (key !== invKey) {
+			lastInv = invState; invState = inv; invKey = key;
+			render(n, n);
+			if (lastLives !== null && key) flash('flash-gain');
+		}
 		if (n !== lastLives) {
 			render(n, lastLives);
 			if (lastLives !== null) flash(n < lastLives ? 'flash-loss' : 'flash-gain');
@@ -14960,6 +15018,49 @@ exports.hackOptions = hackOptions;
 })();
 </script>
 
+
+<script>
+/* Botones pixel-art de la cruceta */
+(function () {
+	var N = 14;
+	var C = { o:'#120a1e', L:'#ffe48a', g:'#e0a92e', d:'#8a5a16', f:'#3b2a63', h:'#5a438f', a:'#fff4dc', s:'#120a1e', k:'rgba(0,0,0,.45)' };
+	var arrowUp = [[6,2],[7,2],[5,3],[6,3],[7,3],[8,3],[4,4],[5,4],[6,4],[7,4],[8,4],[9,4],[3,5],[4,5],[5,5],[6,5],[7,5],[8,5],[9,5],[10,5],[6,6],[7,6],[6,7],[7,7],[6,8],[7,8],[6,9],[7,9],[6,10],[7,10]];
+	var rot = {
+		up: function (x, y) { return [x, y]; },
+		right: function (x, y) { return [N - 1 - y, x]; },
+		down: function (x, y) { return [N - 1 - x, N - 1 - y]; },
+		left: function (x, y) { return [y, N - 1 - x]; }
+	};
+	function rect(x, y, c) { return '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + c + '"/>'; }
+	function build(dir) {
+		var out = '';
+		// sombra proyectada
+		for (var x = 1; x < N - 1; x++) out += rect(x, N, C.k) + rect(x, N - 1 + 0, 'none');
+		out = '<g>' + out + '</g><g class="cap">';
+		for (var y = 0; y < N; y++) {
+			for (var x2 = 0; x2 < N; x2++) {
+				var edgeX = (x2 === 0 || x2 === N - 1), edgeY = (y === 0 || y === N - 1);
+				if (edgeX && edgeY) continue;
+				var c;
+				if (edgeX || edgeY) c = C.o;
+				else if (x2 === 1 || y === 1) c = C.L;
+				else if (x2 === N - 2 || y === N - 2) c = C.d;
+				else if (x2 === 2 || y === 2) c = C.g;
+				else if (x2 === N - 3 || y === N - 3) c = C.g;
+				else c = (y === 3 || x2 === 3) ? C.h : C.f;
+				out += rect(x2, y, c);
+			}
+		}
+		var f = rot[dir];
+		arrowUp.forEach(function (p) { var q = f(p[0], p[1]); out += rect(q[0], q[1], C.a); });
+		return '<svg viewBox="0 0 ' + N + ' ' + (N + 1) + '" aria-hidden="true">' + out + '</g></svg>';
+	}
+	['up', 'left', 'right', 'down'].forEach(function (d) {
+		var b = document.querySelector('#touch-controls .' + d);
+		if (b) b.innerHTML = build(d);
+	});
+})();
+</script>
 </body>
 
 
