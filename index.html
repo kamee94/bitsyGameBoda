@@ -820,9 +820,9 @@ Primera pregunta:
     {choice1 = "Escolapies"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choice1}}{
   - choice1 == "Maristas" ?
-    Correcto! Durante el bachillerato.
+    . Correcto! Durante el bachillerato.
   - choice1 == "Escolapies" ?
-    Incorrecto! Empezamos mal...
+    . Incorrecto! Empezamos mal...
 } Tu vida actual es {say {LinkHP}}
 La vida de Mido es {say {MidoHP}}
 Siguiente pregunta:
@@ -834,9 +834,9 @@ Siguiente pregunta:
     {choice2 = "Alex"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choice2}}{
   - choice2 == "Gemma" ?
-    Correcto!
+    . Correcto!
   - choice2 == "Alex" ?
-    Incorrecto! Él no pelea ni contra un insecto. 
+    . Incorrecto! Él no pelea ni contra un insecto. 
 } Tu vida actual es {say {LinkHP}}
 La vida de Mido es {say {MidoHP}}
 Y ultima pregunta:
@@ -848,9 +848,9 @@ Y ultima pregunta:
     {choice3 = "Si"}{LinkHP = LinkHP - 1}
 }Tu respuesta ha sido... {say {choice3}}{
   - choice3 == "No" ?
-    Correcto! Nadie les saca de sus tortitas.
+    . Correcto! Nadie les saca de sus tortitas.
   - choice3 == "Si" ?
-    Incorrecto!
+    . Incorrecto!
 } Tu vida actual es {say {LinkHP}}
 La vida de Mido es {say {MidoHP}}{
   - {LinkHP} <= 0 ?
