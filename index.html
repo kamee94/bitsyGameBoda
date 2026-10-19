@@ -768,7 +768,7 @@ NAME Trifuerza de la Sabiduria
 
 DLG 3
 """
-¡Hey listen! ¡Despierta, héroe... ¡por fin!
+{FairyTalked = 1}¡Hey listen! ¡Despierta, héroe... ¡por fin!
 Durante años, dos aventureros han recorrido juntos diferentes 
 mundos, acumulando recuerdos, encontrando aliados 
 y escribiendo su propia historia. 
@@ -801,69 +801,88 @@ NAME Espada Maestra que repele el mal dialog
 
 DLG 7
 """
-¡Alto ahí, viajero!{p}
+{MidoTalked = 1}¡Alto ahí, viajero!{p}
 Soy Mido, guardian del bosque.
 ¿Quién te ha dejado entrar en el bosque?
-...
 ¿Vienes a recuperar los recuerdos de dos aventureros?
 Si quieres avanzar, tendrás que demostrar que conoces su historia.
 Te haré 3 sencillas preguntas.
-Respóndelas todas bien y quizas te ayude.
-Si fallas aunque sea una, no tendras premio.
-¿Estas listo?
-Primera pregunta:
-¿Donde se conocieron nuestros aventureros?{p}
+Respóndelas todas bien y quizás te ayude.
+Si fallas aunque sea una, no tendrás premio.
+¿Estás listo?{p}--- PREGUNTA 1 de 3 ---
+¿Dónde se conocieron nuestros aventureros?{p}
 {choice
   - En Maristas
-    {choice1 = "Maristas"}{LinkHP = 3}{MidoHP = MidoHP - 1}
+    {choice1 = "Maristas"}{LinkHP = 3}
   - Escolapies
-    {choice1 = "Escolapies"}{LinkHP = LinkHP - 1}
+    {choice1 = "Escolapies"}
 }Tu respuesta ha sido... {say {choice1}}{
   - choice1 == "Maristas" ?
-    Correcto! Durante el bachillerato.
+    . Correcto! Durante el bachillerato.
   - choice1 == "Escolapies" ?
-    Incorrecto! Empezamos mal...
-} Tu vida actual es {say {LinkHP}}
-La vida de Mido es {say {MidoHP}}
-Siguiente pregunta:
-¿Cual de los dos aventureros se enfrentó a un mono en 2024?{p}
+    . Incorrecto! Empezamos mal...
+}{p}{
+  - choice1 == "Maristas" ?
+    {MidoHP = MidoHP - 1}
+  - choice1 == "Escolapies" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 1}
+}
+{p}--- PREGUNTA 2 de 3 ---
+¿Cuál de los dos aventureros se enfrentó a un mono en 2024?{p}
 {choice
   - Gemma
-    {choice2 = "Gemma"}{MidoHP = MidoHP - 1}
+    {choice2 = "Gemma"}
   - Alex
-    {choice2 = "Alex"}{LinkHP = LinkHP - 1}
+    {choice2 = "Alex"}
 }Tu respuesta ha sido... {say {choice2}}{
   - choice2 == "Gemma" ?
-    Correcto!
+    . Correcto!
   - choice2 == "Alex" ?
-    Incorrecto! Él no pelea ni contra un insecto. 
-} Tu vida actual es {say {LinkHP}}
-La vida de Mido es {say {MidoHP}}
-Y ultima pregunta:
+    . Incorrecto! Él no pelea ni contra un insecto.
+}{p}{
+  - choice2 == "Gemma" ?
+    {MidoHP = MidoHP - 1}
+  - choice2 == "Alex" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 1}
+}
+{p}--- PREGUNTA 3 de 3 ---
 ¿Son los aventureros conocidos por sus dotes culinarias?{p}
 {choice
   - No, hacen lo justo
-    {choice3 = "No"}{MidoHP = MidoHP - 1}
+    {choice3 = "No"}
   - Chicote es su alumno
-    {choice3 = "Si"}{LinkHP = LinkHP - 1}
+    {choice3 = "Si"}
 }Tu respuesta ha sido... {say {choice3}}{
   - choice3 == "No" ?
-    Correcto! Nadie les saca de sus tortitas.
+    . Correcto! Nadie les saca de sus tortitas.
   - choice3 == "Si" ?
-    Incorrecto!
-} Tu vida actual es {say {LinkHP}}
-La vida de Mido es {say {MidoHP}}{
+    . Incorrecto!
+}{p}{
+  - choice3 == "No" ?
+    {MidoHP = MidoHP - 1}
+  - choice3 == "Si" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 1}
+}{
   - {LinkHP} <= 0 ?
-    Has sido derrotado
+    Has sido derrotado.
   - else ?
     {
       - {MidoHP} > 0 ?
-        Mido ha huido del bosque
+        Mido ha huido del bosque...
       - else ?
         {
           - {MidoHP} == 0 ?
-            . Has derrotado a Mido
-            Hay una nota en el suelo: [He visto algo util al sur del bosque. Ve y explora]
+            Has derrotado a Mido{NoteMido = 1}
+            Hay una nota en el suelo.
           - else ?
             {end}
         }
@@ -882,8 +901,8 @@ NAME Escudo dialog
 
 DLG a
 """
-Te estaba esperando, héroe.
-Los recuerdos siguen vivos. Aquí tienes el segundo fragmento. {item "Trifuerza de Sabiduria" {{item "Trifuerza de Sabiduria"} + 1}}
+{AlcaldeTalked = 1}Te estaba esperando, héroe.
+Los recuerdos siguen vivos. Aquí tienes el segundo fragmento. {item "Trifuerza de la Sabiduria" {{item "Trifuerza de la Sabiduria"} + 1}}
 Has recogido la Trifuerza de Sabiduria.
 Alguien te espera al final del camino. ¡Mucha suerte!
 
@@ -904,17 +923,23 @@ Tu vida actual es {say {LinkHP}}
   - 2015
     {choiceGanon1 = "2015"}
   - 2016
-    {choiceGanon1 = "2016"}{LinkHP = LinkHP - 1}
+    {choiceGanon1 = "2016"}
 }Tu respuesta ha sido... {say {choiceGanon1}}{
   - choiceGanon1 == "2015" ?
     . Correcto!
   - choiceGanon1 == "2016" ?
     . Incorrecto!
-}{p}--- PREGUNTA 2 de 10 ---
+}{p}{
+  - choiceGanon1 == "2016" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 2 de 10 ---
 ¿Cuál es el anime favorito de Gemma?{p}
 {choice
   - One Piece
-    {choiceGanon2 = "One Piece"}{LinkHP = LinkHP - 1}
+    {choiceGanon2 = "One Piece"}
   - Bola de Drac
     {choiceGanon2 = "Bola de Drac"}
 }Tu respuesta ha sido... {say {choiceGanon2}}{
@@ -922,18 +947,30 @@ Tu vida actual es {say {LinkHP}}
     . Incorrecto!
   - choiceGanon2 == "Bola de Drac" ?
     . Correcto!
-}{p}--- PREGUNTA 3 de 10 ---
+}{p}{
+  - choiceGanon2 == "One Piece" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 3 de 10 ---
 ¿Y para Alex, cuál es su saga de juegos favorita?{p}
 {choice
   - The Legend of Zelda
     {choiceGanon3 = "The Legend of Zelda"}
   - Mario Bros
-    {choiceGanon3 = "Mario Bros"}{LinkHP = LinkHP - 1}
+    {choiceGanon3 = "Mario Bros"}
 }Tu respuesta ha sido... {say {choiceGanon3}}{
   - choiceGanon3 == "The Legend of Zelda" ?
     . Correcto!
   - choiceGanon3 == "Mario Bros" ?
     . Incorrecto!
+}{p}{
+  - choiceGanon3 == "Mario Bros" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
 } Tu vida actual es {say {LinkHP}}
 De momento vas muy bien, pero aún queda mucho por hacer.
 {p}--- PREGUNTA 4 de 10 ---
@@ -942,17 +979,23 @@ De momento vas muy bien, pero aún queda mucho por hacer.
   - Badalona
     {choiceGanon4 = "Badalona"}
   - Sant Adria del Besos
-    {choiceGanon4 = "Sant Adrià del Besòs"}{LinkHP = LinkHP - 1}
+    {choiceGanon4 = "Sant Adrià del Besòs"}
 }Tu respuesta ha sido... {say {choiceGanon4}}{
   - choiceGanon4 == "Badalona" ?
     . Correcto, y alli siguen.
-  - choiceGanon4 == "Sant Adria del Besos" ?
+  - choiceGanon4 == "Sant Adrià del Besòs" ?
     . Incorrecto!
-}{p}--- PREGUNTA 5 de 10 ---
+}{p}{
+  - choiceGanon4 == "Sant Adrià del Besòs" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 5 de 10 ---
 ¿Qué raza de perro quieren tener en un futuro cercano?{p}
 {choice
   - Bichon Maltes
-    {choiceGanon5 = "Bichon Maltes"}{LinkHP = LinkHP - 1}
+    {choiceGanon5 = "Bichon Maltes"}
   - Shiba Inu
     {choiceGanon5 = "Shiba Inu"}
 }Tu respuesta ha sido... {say {choiceGanon5}}{
@@ -960,12 +1003,18 @@ De momento vas muy bien, pero aún queda mucho por hacer.
     . Incorrecto!
   - choiceGanon5 == "Shiba Inu" ?
     . Correcto!
-}{p}--- PREGUNTA 6 de 10 ---
+}{p}{
+  - choiceGanon5 == "Bichon Maltes" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 6 de 10 ---
 Ya va quedando menos, aumentamos la dificultad.
 ¿Cuáles son sus galletas favoritas?{p}
 {choice
   - Galletas Principe
-    {choiceGanon6 = "Galletas Principe"}{LinkHP = LinkHP - 1}
+    {choiceGanon6 = "Galletas Principe"}
   - Galletas Dinosaurio
     {choiceGanon6 = "Galletas Dinosaurio"}
 }Tu respuesta ha sido... {say {choiceGanon6}}{
@@ -973,23 +1022,35 @@ Ya va quedando menos, aumentamos la dificultad.
     . Incorrecto.
   - choiceGanon6 == "Galletas Dinosaurio" ?
     . Correcto, siempre dino gorron. 
-}{p}--- PREGUNTA 7 de 10 ---
+}{p}{
+  - choiceGanon6 == "Galletas Principe" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 7 de 10 ---
 ¿Qué número de dorsal de basquet han llevado nuestros aventureros?{p}
 {choice
   - El 14
     {choiceGanon7 = "El 14"}
   - El 11
-    {choiceGanon7 = "El 11"}{LinkHP = LinkHP - 1}
+    {choiceGanon7 = "El 11"}
 }Tu respuesta ha sido... {say {choiceGanon7}}{
   - choiceGanon7 == "El 14" ?
     . Correcto!
   - choiceGanon7 == "El 11" ?
     . Incorrecto!
-}{p}--- PREGUNTA 8 de 10 ---
+}{p}{
+  - choiceGanon7 == "El 11" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 8 de 10 ---
 ¿Quién odia más perder?{p}
 {choice
   - Alex
-    {choiceGanon8 = "Alex"}{LinkHP = LinkHP - 1}
+    {choiceGanon8 = "Alex"}
   - Gemma
     {choiceGanon8 = "Gemma"}
 }Tu respuesta ha sido... {say {choiceGanon8}}{
@@ -997,23 +1058,35 @@ Ya va quedando menos, aumentamos la dificultad.
     . Que va, Gemma es mucho peor
   - choiceGanon8 == "Gemma" ?
     . Correcto, no hay nadie más competitiva que ella.
-}{p}--- PREGUNTA 9 de 10 ---
+}{p}{
+  - choiceGanon8 == "Alex" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 9 de 10 ---
 ¿Cómo resuelven las situaciones que ninguno de los dos quiere hacer?{p}
 {choice
   - Jugando al piedra, papel, tijeras
     {choiceGanon9 = "Jugando al piedra, papel, tijeras"}
   - Siempre lo acaba haciendo Alex
-    {choiceGanon9 = "Siempre lo acaba haciendo Alex"}{LinkHP = LinkHP - 1}
+    {choiceGanon9 = "Siempre lo acaba haciendo Alex"}
 }Tu respuesta ha sido... {say {choiceGanon9}}{
   - choiceGanon9 == "Jugando al piedra, papel, tijeras" ?
     . Correcto!
   - choiceGanon9 == "Siempre lo acaba haciendo Alex" ?
     . Incorrecto!
-}{p}--- PREGUNTA 10 de 10 ---
+}{p}{
+  - choiceGanon9 == "Siempre lo acaba haciendo Alex" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}--- PREGUNTA 10 de 10 ---
 ¿Quién lleva la correa en la relación?{p}
 {choice
   - Alex
-    {choiceGanon10 = "Alex"}{LinkHP = LinkHP - 1}
+    {choiceGanon10 = "Alex"}
   - Gemma
     {choiceGanon10 = "Gemma"}
 }Tu respuesta ha sido... {say {choiceGanon10}}{
@@ -1022,15 +1095,16 @@ Ya va quedando menos, aumentamos la dificultad.
   - choiceGanon10 == "Gemma" ?
     . Las mujeres siempre.
 }{p}{
+  - choiceGanon10 == "Alex" ?
+    {LinkHP = LinkHP - 1}
+}{
+  - LinkHP <= 0 ?
+    ¡Te has quedado sin vidas!{p}{GameOver = 2}
+}{
   - LinkHP > 0 ?
-    ¡TRIFUERZA RESTAURADA!{p}
-	MEMORIES RESTORED{pg}
-	Has recuperado nuestra historia.
-	{p}Pero esta aventura todavía no ha terminado...
-	{p}El siguiente recuerdo te espera en el Mas del Silenci.
-	{p}¡Nos vemos en la boda el 29/05/2026!{end}
+    ¡TRIFUERZA RESTAURADA!{p}MEMORIES RESTORED{p}Has recuperado nuestra historia.{p}Pero esta aventura todavía no ha terminado...{p}El siguiente recuerdo te espera en el Mas del Silenci.{p}¡Nos vemos en la boda el 29/05/2026!{end}
   - else ?
-    Has muerto... Aún no eres digno de asistir a la boda. Prueba otra vez!{end}
+    Has muerto... Aún no eres digno de asistir a la boda. Prueba otra vez!{GameOver = 2}
 }
 
 """
@@ -1041,6 +1115,21 @@ VAR LinkHP
 
 VAR MidoHP
 3
+
+VAR MidoTalked
+0
+
+VAR GameOver
+0
+
+VAR NoteMido
+0
+
+VAR AlcaldeTalked
+0
+
+VAR FairyTalked
+0
 
 VAR GanonHP
 10
@@ -14603,16 +14692,40 @@ exports.hackOptions = hackOptions;
 	var VOLUME     = 0.5;               // volumen 0.0 – 1.0
 	// ─────────────────────
 
+	var FADE_MS    = 5000;              // duración de la subida de volumen
+
 	var audioMain  = new Audio(SONG_MAIN);
 	var audioFinal = new Audio(SONG_FINAL);
 	audioMain.loop  = true;
 	audioFinal.loop = true;
-	audioMain.volume  = VOLUME;
-	audioFinal.volume = VOLUME;
+	audioMain.volume  = 0;
+	audioFinal.volume = 0;
 
 	var current  = null;
-	var unlocked = false;
+	var unlocked = false;   // el navegador ya permite reproducir
 	var lastRoom = null;
+	var fadeTimer = null;
+
+	function fadeIn(a) {
+		clearInterval(fadeTimer);
+		a.volume = 0;
+		var t0 = Date.now();
+		fadeTimer = setInterval(function () {
+			var k = Math.min(1, (Date.now() - t0) / FADE_MS);
+			a.volume = VOLUME * k;
+			if (k >= 1) clearInterval(fadeTimer);
+		}, 50);
+	}
+
+	function startCurrent() {
+		if (!current) return;
+		var a = current;
+		var pr = a.play();
+		if (pr && pr.then) {
+			pr.then(function () { unlocked = true; if (a === current) fadeIn(a); })
+			  .catch(function () { /* esperando a la primera interacción */ });
+		} else { unlocked = true; fadeIn(a); }
+	}
 
 	function switchSong(roomId) {
 		// == en vez de === para cubrir '6' vs 6
@@ -14620,27 +14733,25 @@ exports.hackOptions = hackOptions;
 		if (current === target) return;
 		if (current) { current.pause(); current.currentTime = 0; }
 		current = target;
-		if (unlocked) {
-			current.play().catch(function () {});
-		}
+		if (unlocked) startCurrent();
 	}
 
-	// Los navegadores bloquean autoplay hasta la primera interacción.
+	// La música arranca nada más abrir el juego (pantalla de título), con subida suave.
+	// Si el navegador bloquea el autoplay, empieza en la primera pulsación o toque.
+	current = audioMain;
+	startCurrent();
+
 	function unlock() {
 		if (unlocked) return;
-		unlocked = true;
-		if (current) {
-			current.play().catch(function () {});
-		} else if (typeof state !== 'undefined' && state.room != null) {
-			switchSong(state.room);
-		}
+		if (!current) current = audioMain;
+		startCurrent();
 	}
+	// En fase de captura para que ninguna otra pantalla se coma el evento.
+	['keydown', 'pointerdown', 'touchstart', 'click'].forEach(function (ev) {
+		window.addEventListener(ev, unlock, true);
+	});
 
-	document.addEventListener('keydown',     unlock, { once: true });
-	document.addEventListener('pointerdown', unlock, { once: true });
-
-	// Comprueba el cambio de sala cada 300 ms (robusto ante cualquier
-	// problema de scope con onInitRoom).
+	// Comprueba el cambio de sala cada 300 ms.
 	setInterval(function () {
 		if (typeof state === 'undefined' || state.room == null) return;
 		if (state.room !== lastRoom) {
@@ -14789,8 +14900,9 @@ exports.hackOptions = hackOptions;
 
 <!-- HUD DE VIDAS: lee la variable LinkHP del juego y se actualiza solo -->
 <div id="lives-hud" role="status" aria-live="polite" style="display:none"></div>
+<div id="mido-hud" role="status" aria-live="polite" style="display:none"></div>
 <style>
-#lives-hud {
+#lives-hud, #mido-hud {
 	--hs: 28px; /* tamaño de cada corazón (lo ajusta el script) */
 	position: fixed;
 	z-index: 90;
@@ -14812,19 +14924,19 @@ exports.hackOptions = hackOptions;
 	white-space: nowrap;
 	transition: border-color .25s;
 }
-#lives-hud .heart { display: block; width: var(--hs); height: var(--hs); }
-#lives-hud .heart svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; image-rendering: pixelated; overflow: visible; }
-#lives-hud .count { font-size: calc(var(--hs) * .86); margin-left: calc(var(--hs) * .1); text-shadow: 0 2px 0 #000; }
-#lives-hud .sep { width: max(2px, calc(var(--hs) * .09)); align-self: stretch; background: rgba(255,255,255,.35); margin: 0 calc(var(--hs) * .12); }
-#lives-hud .itm { display: block; width: var(--hs); height: var(--hs); }
-#lives-hud .itm svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; overflow: visible; }
-#lives-hud .itm.gain svg { animation: heartGain .6s cubic-bezier(.2, 1.5, .4, 1); }
-#lives-hud.flash-loss { border-color: #ff5a5a; }
-#lives-hud.flash-gain { border-color: #ffd84d; }
-#lives-hud.dead { border-color: #ff5a5a; }
-#lives-hud .heart.gain svg { animation: heartGain .6s cubic-bezier(.2, 1.5, .4, 1); }
-#lives-hud .heart.lose svg { animation: heartLose .55s ease-out; }
-#lives-hud.dead .heart svg { opacity: .8; }
+#lives-hud .heart, #mido-hud .heart { display: block; width: var(--hs); height: var(--hs); }
+#lives-hud .heart svg, #mido-hud .heart svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; image-rendering: pixelated; overflow: visible; }
+#lives-hud .count, #mido-hud .count { font-size: calc(var(--hs) * .86); margin-left: calc(var(--hs) * .1); text-shadow: 0 2px 0 #000; }
+#lives-hud .sep, #mido-hud .sep { width: max(2px, calc(var(--hs) * .09)); align-self: stretch; background: rgba(255,255,255,.35); margin: 0 calc(var(--hs) * .12); }
+#lives-hud .itm, #mido-hud .itm { display: block; width: var(--hs); height: var(--hs); }
+#lives-hud .itm svg, #mido-hud .itm svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; overflow: visible; }
+#lives-hud .itm.gain svg, #mido-hud .itm.gain svg { animation: heartGain .6s cubic-bezier(.2, 1.5, .4, 1); }
+#lives-hud.flash-loss, #mido-hud.flash-loss { border-color: #ff5a5a; }
+#lives-hud.flash-gain, #mido-hud.flash-gain { border-color: #ffd84d; }
+#lives-hud.dead, #mido-hud.dead { border-color: #ff5a5a; }
+#lives-hud .heart.gain svg, #mido-hud .heart.gain svg { animation: heartGain .6s cubic-bezier(.2, 1.5, .4, 1); }
+#lives-hud .heart.lose svg, #mido-hud .heart.lose svg { animation: heartLose .55s ease-out; }
+#lives-hud.dead .heart svg, #mido-hud.dead .heart svg { opacity: .8; }
 @keyframes heartGain {
 	0%   { transform: scale(0) rotate(-20deg); filter: brightness(2.2); }
 	60%  { transform: scale(1.5) rotate(8deg); filter: brightness(1.6); }
@@ -14840,6 +14952,9 @@ exports.hackOptions = hackOptions;
 @media (prefers-reduced-motion: reduce) {
 	#lives-hud .heart svg { animation: none !important; }
 }
+#mido-hud .face { display: block; width: var(--hs); height: var(--hs); margin-right: calc(var(--hs) * .08); }
+#mido-hud .face svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; overflow: visible; }
+#mido-hud.flash-gain { border-color: #b36bff; }
 </style>
 <script>
 (function () {
@@ -14873,9 +14988,9 @@ exports.hackOptions = hackOptions;
 	function rect(r, c, fill) {
 		return '<rect x="' + (c + 1) + '" y="' + (r + 1) + '" width="1" height="1" fill="' + fill + '"/>';
 	}
-	function buildHeart(full) {
+	function buildHeart(full, scheme) {
 		var pal = full
-			? { body: '#ff4d63', light: '#ffc1cb', dark: '#c21f3a', line: '#2a0710' }
+			? (scheme === 'mido' ? { body: '#b36bff', light: '#e6ccff', dark: '#6a2fc2', line: '#1a0733' } : { body: '#ff4d63', light: '#ffc1cb', dark: '#c21f3a', line: '#2a0710' })
 			: { body: '#4a3848', light: '#4a3848', dark: '#3a2a38', line: 'rgba(255,255,255,.28)' };
 		var out = '<svg viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
 		// contorno (vecinos en 8 direcciones)
@@ -14904,9 +15019,10 @@ exports.hackOptions = hackOptions;
 	var ICONS = {
 		'3': ['........','........','...##...','..#wY#..','.#wYYY#.','#wYYYYY#','########','........'],
 		'4': ['...##...','..#wi#..','..#wi#..','..#wi#..','..#wi#..','.#YYYY#.','..#WW#..','..#bb#..'],
-		'5': ['........','.######.','#iiYYjj#','#iiYYjj#','#YYYYYY#','#iiYYjj#','.#iYYj#.','...##...']
+		'5': ['........','.######.','#iiYYjj#','#iiYYjj#','#YYYYYY#','#iiYYjj#','.#iYYj#.','...##...'],
+		'7': ['........','........','...##...','..#wB#..','.#wBBB#.','#wBBBBB#','########','........']
 	};
-	var ICON_COL = { '#': '#2a0710', w: '#fff4dc', Y: '#ffcc33', i: '#bfe8ff', j: '#5aa9d6', W: '#c98a52', b: '#8a4a24' };
+	var ICON_COL = { '#': '#2a0710', w: '#fff4dc', Y: '#ffcc33', i: '#bfe8ff', j: '#5aa9d6', W: '#c98a52', b: '#8a4a24', B: '#4aa3ff' };
 	function buildIcon(id) {
 		var rows = ICONS[id], out = '<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
 		for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) {
@@ -14915,8 +15031,8 @@ exports.hackOptions = hackOptions;
 		}
 		return out + '</svg>';
 	}
-	var ICON_HTML = { '3': buildIcon('3'), '4': buildIcon('4'), '5': buildIcon('5') };
-	var ITEM_IDS = ['3', '4', '5'];
+	var ICON_HTML = { '3': buildIcon('3'), '4': buildIcon('4'), '5': buildIcon('5'), '7': buildIcon('7') };
+	var ITEM_IDS = ['3', '4', '5', '7'];
 	var invState = {};
 	var invKey = '';
 	var lastInv = null;
@@ -14938,6 +15054,7 @@ exports.hackOptions = hackOptions;
 		return h ? '<span class="sep"></span>' + h : '';
 	}
 	var HEART_FULL = buildHeart(true);
+	var MIDO_FULL = buildHeart(true, 'mido');
 	var HEART_EMPTY = buildHeart(false);
 
 	function readLives() {
@@ -14980,6 +15097,88 @@ exports.hackOptions = hackOptions;
 		flashTimer = setTimeout(function () { hud.classList.remove('flash-loss', 'flash-gain'); }, 700);
 	}
 
+
+	// ── Vida de Mido (contrincante, arriba a la derecha) ──
+	var midoHud = document.getElementById('mido-hud');
+	var MIDO_FACE = ['..XXXX..', '.XXXXXX.', '.XTTTTX.', '.TBTTBT.', 'TUUuUUUT', '.UUBBUU.', '.UU..UU.', '.BB..BB.'];
+	var MIDO_COL = { X: '#d6422a', T: '#f3c08f', B: '#7a4a24', U: '#3aa655', u: '#86e06e' };
+	var MIDO_FACE_HTML = (function () {
+		var o = '<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
+		for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) {
+			var ch = MIDO_FACE[y].charAt(x);
+			if (ch !== '.') o += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + MIDO_COL[ch] + '"/>';
+		}
+		return o + '</svg>';
+	})();
+	var lastMido = null;
+	function readVar(name) {
+		try {
+			var si = window.scriptInterpreter;
+			if (si && si.HasVariable(name)) {
+				var v = parseInt(si.GetVariable(name), 10);
+				return isNaN(v) ? null : v;
+			}
+		} catch (e) {}
+		return null;
+	}
+	function midoActive() {
+		try {
+			return readVar('MidoTalked') === 1 && window.sprite && window.sprite['c'] && window.sprite['c'].room != null;
+		} catch (e) { return false; }
+	}
+	function renderMido(n, prev) {
+		var shown = Math.max(0, n), html = '<span class="face">' + MIDO_FACE_HTML + '</span>';
+		for (var i = 0; i < 3; i++) {
+			var cls = 'heart';
+			if (prev !== null && i >= shown && i < Math.max(0, prev)) cls += ' lose';
+			html += '<span class="' + cls + '">' + (i < shown ? MIDO_FULL : HEART_EMPTY) + '</span>';
+		}
+		midoHud.innerHTML = html;
+		midoHud.setAttribute('aria-label', 'Vida de Mido: ' + shown);
+	}
+	function tickMido() {
+		if (holdHud()) return;
+		var n = readVar('MidoHP');
+		if (n === null || !midoActive() || window.isNarrating === true) {
+			midoHud.style.display = 'none'; lastMido = null; return;
+		}
+		if (n !== lastMido) {
+			renderMido(n, lastMido);
+			if (lastMido !== null && n < lastMido) {
+				midoHud.classList.add('flash-gain');
+				setTimeout(function () { midoHud.classList.remove('flash-gain'); }, 700);
+			}
+			lastMido = n;
+		}
+		midoHud.style.display = 'flex';
+		var canvas = document.getElementById('game');
+		if (!canvas) return;
+		var r = canvas.getBoundingClientRect(), W = r.width;
+		midoHud.style.setProperty('--hs', Math.round(Math.max(12, W * 0.042)) + 'px');
+		midoHud.style.left = 'auto';
+		midoHud.style.right = Math.round((document.documentElement.clientWidth || window.innerWidth) - r.right + W * 0.02) + 'px';
+		midoHud.style.top = Math.round(r.top + W * 0.01) + 'px';
+	}
+	setInterval(tickMido, 100);
+
+
+	// Retiene los cambios de vida mientras el jugador está leyendo la respuesta de la pregunta
+	// (el guion se adelanta a la pantalla, así que se sincroniza con la página visible).
+	var holding = false;
+	function pageText() {
+		try {
+			if (typeof dialogBuffer === 'undefined' || !dialogBuffer || !dialogBuffer.CurPage) return '';
+			return dialogBuffer.CurPage().map(function (r) { return r.map(function (c) { return c.char || ''; }).join(''); }).join(' ');
+		} catch (e) { return ''; }
+	}
+	function holdHud() {
+		if (window.isDialogMode !== true) { holding = false; return false; }
+		var t = pageText();
+		if (t.indexOf('Tu respuesta ha sido') !== -1) { holding = true; return true; }
+		if (holding && /PREGUNTA|sin vidas|Tu vida actual|vida de Mido|derrotado|huido|TRIFUERZA/.test(t)) holding = false;
+		return holding;
+	}
+
 	function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
 	// Siempre dentro del juego, arriba a la izquierda (a prueba de móvil vertical y horizontal).
@@ -14996,6 +15195,7 @@ exports.hackOptions = hackOptions;
 	}
 
 	function tick() {
+		if (holdHud()) return;
 		var n = readLives();
 		if (n === null) { hud.style.display = 'none'; return; }
 		var inv = readInv(), key = ITEM_IDS.filter(function (i) { return inv[i]; }).join();
@@ -15253,6 +15453,218 @@ exports.hackOptions = hackOptions;
 	window.addEventListener('keydown', onKey, true);
 	window.addEventListener('keyup', onKey, true);
 	ov.addEventListener('pointerdown', function (e) { e.preventDefault(); dismiss(); });
+})();
+</script>
+
+<script>
+/* Tras hablar con Mido desaparece; tras hablar con el Alcalde ya no vuelve a hablar. */
+(function () {
+	setInterval(function () {
+		try {
+			var si = window.scriptInterpreter;
+			if (!si || !window.sprite || window.isDialogMode) return;
+			if (si.HasVariable('MidoTalked') && parseInt(si.GetVariable('MidoTalked'), 10) === 1) {
+				var m = window.sprite['c'];
+				if (m && m.room != null) {
+					m.room = null;
+					drawRoom(room[state.room], { redrawAll: true });
+				}
+			}
+			if (si.HasVariable('FairyTalked') && parseInt(si.GetVariable('FairyTalked'), 10) === 1) {
+				var f = window.sprite['b'];
+				if (f && f.dlg != null) f.dlg = null;
+			}
+			if (si.HasVariable('AlcaldeTalked') && parseInt(si.GetVariable('AlcaldeTalked'), 10) === 1) {
+				var a = window.sprite['d'];
+				if (a && a.dlg != null) a.dlg = null;
+			}
+		} catch (e) {}
+	}, 100);
+})();
+</script>
+
+<style>
+.pxo { position: fixed; inset: 0; z-index: 1100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4vmin;
+	font-family: 'Press Start 2P', 'Courier New', monospace; cursor: pointer; user-select: none; -webkit-user-select: none;
+	opacity: 0; transition: opacity .35s ease; -webkit-tap-highlight-color: transparent; }
+.pxo.show { opacity: 1; }
+.pxo.note { background: rgba(6, 8, 22, .8); }
+.pxo.over { background: #000; }
+.pxo svg { shape-rendering: crispEdges; display: block; overflow: visible; }
+.pxo .paper { position: relative; --u: calc(min(88vw, 104vh) / 36); width: calc(var(--u) * 36); height: calc(var(--u) * 28); filter: drop-shadow(0 calc(var(--u) * .6) 0 rgba(0, 0, 0, .55)); animation: noteDrop .5s steps(7) both; }
+.pxo .paper svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+@keyframes noteDrop { from { transform: translateY(-14vh) rotate(-3deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.pxo .ptext { position: absolute; left: calc(var(--u) * 6); right: calc(var(--u) * 6); top: calc(var(--u) * 6); bottom: calc(var(--u) * 6);
+	display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #4a2c12; }
+.pxo .ptitle { font-size: calc(var(--u) * 1.05); color: #9a4a22; letter-spacing: .12em; margin-bottom: calc(var(--u) * 1.6); }
+.pxo .pbody { font-size: calc(var(--u) * 1.08); line-height: 1.75; min-height: calc(var(--u) * 9); text-align: left; }
+.pxo .pcompass { width: calc(var(--u) * 3.4); height: calc(var(--u) * 3.4); margin-top: calc(var(--u) * 1); animation: pxBob .9s steps(2) infinite; }
+@keyframes pxBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(calc(var(--u) * .5)); } }
+.pxo .hint { color: #fff4dc; font-size: clamp(10px, 2.3vmin, 20px); letter-spacing: .08em; text-shadow: 0 .3em 0 #120a1e; animation: pxBlink 1.1s steps(2) infinite; text-align: center; }
+@keyframes pxBlink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+.pxo .gologo { width: min(88vw, 100vh); height: auto; animation: goShake .5s steps(4) both; }
+@keyframes goShake { 0% { transform: translateX(-3vmin); } 25% { transform: translateX(3vmin); } 50% { transform: translateX(-2vmin); } 75% { transform: translateX(1vmin); } 100% { transform: none; } }
+.pxo .gosub { color: #ffd9c9; font-size: clamp(11px, 2.6vmin, 24px); text-align: center; line-height: 1.8; padding: 0 6vw; }
+@media (prefers-reduced-motion: reduce) { .pxo .paper, .pxo .gologo, .pxo .pcompass, .pxo .hint { animation: none; } }
+</style>
+<script>
+/* Nota del suelo (tras vencer a Mido) y pantalla de Game Over (si Mido te derrota). */
+(function () {
+	var NS = 'http://www.w3.org/2000/svg';
+	function el(n, a, p) { var e = document.createElementNS(NS, n); for (var k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+	function rect(p, x, y, w, h, c) { return el('rect', { x: x, y: y, width: w, height: h, fill: c }, p); }
+	function readVar(n) {
+		try { var si = window.scriptInterpreter; if (si && si.HasVariable(n)) return parseInt(si.GetVariable(n), 10); } catch (e) {}
+		return null;
+	}
+	function setVar(n, v) { try { window.scriptInterpreter.SetVariable(n, v); } catch (e) {} }
+	var busy = false, dying = false;
+	function pageText() {
+		try {
+			if (typeof dialogBuffer === 'undefined' || !dialogBuffer || !dialogBuffer.CurPage) return '';
+			return dialogBuffer.CurPage().map(function (r) { return r.map(function (c) { return c.char || ''; }).join(''); }).join(' ');
+		} catch (e) { return ''; }
+	}
+	// Un toque en cualquier parte también cuenta como pulsación.
+	function pointerArm(cb) {
+		var h = function (e) { e.stopImmediatePropagation(); e.preventDefault(); window.removeEventListener('pointerdown', h, true); cb(); };
+		window.addEventListener('pointerdown', h, true);
+		return function () { window.removeEventListener('pointerdown', h, true); };
+	}
+
+	// Mientras hay una pantalla encima, ninguna tecla llega al juego.
+	function lockInput(onPress) {
+		var handler = function (e) { e.stopImmediatePropagation(); e.preventDefault(); if (e.type === 'keydown' && !e.repeat) onPress(); };
+		window.addEventListener('keydown', handler, true);
+		window.addEventListener('keyup', handler, true);
+		return function () { window.removeEventListener('keydown', handler, true); window.removeEventListener('keyup', handler, true); };
+	}
+
+	// ───────── Nota ─────────
+	var NOTE = 'He visto algo útil al sur del bosque. Ve y explora.';
+	function paperSVG() {
+		var W = 36, H = 28, svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true' });
+		var seed = 5; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+		for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
+			var corner = (x < 1 || x > W - 2) && (y < 1 || y > H - 2);
+			if (corner) continue;
+			var c;
+			var edge = x === 0 || x === W - 1 || y === 0 || y === H - 1;
+			if (edge) c = '#2f1b0b';
+			else if (y <= 3) c = (y === 1) ? '#f0cf86' : (y === 3 ? '#9a6a2e' : '#d9b068');          // rollo superior
+			else if (y >= H - 4) c = (y === H - 4) ? '#f0cf86' : (y === H - 2 ? '#9a6a2e' : '#d9b068'); // rollo inferior
+			else if (x === 1 || x === W - 2) c = '#c79a52';                                              // borde del papel
+			else if (x === 2 || x === W - 3) c = '#e8cb8c';
+			else c = '#f5e3b6';
+			if (!edge && y > 4 && y < H - 5 && x > 2 && x < W - 3 && rnd() < .035) c = '#e6cd96'; // manchas
+			rect(svg, x, y, 1, 1, c);
+		}
+		// extremos de los rollos
+		[[0, 2], [W - 1, 2], [0, H - 3], [W - 1, H - 3]].forEach(function (p) { rect(svg, p[0], p[1], 1, 1, '#2f1b0b'); });
+		// sello de lacre
+		var seal = ['..RR..', '.RrrR.', 'RrRRrR', 'RrRRrR', '.RrrR.', '..RR..'];
+		var sx = W - 8, sy = H - 10;
+		seal.forEach(function (row, j) { for (var i = 0; i < row.length; i++) { var ch = row[i]; if (ch !== '.') rect(svg, sx + i, sy + j, 1, 1, ch === 'R' ? '#b3262e' : '#e5555c'); } });
+		return svg;
+	}
+	function compassSVG() {
+		// flecha hacia abajo (sur)
+		var rows = ['...XX...', '...XX...', '...XX...', '.XXXXXX.', '..XXXX..', '...XX...'];
+		var svg = el('svg', { viewBox: '0 0 8 6' });
+		rows.forEach(function (r, j) { for (var i = 0; i < 8; i++) if (r[i] === 'X') { rect(svg, i, j, 1, 1, '#b3262e'); } });
+		return svg;
+	}
+	function showNote() {
+		if (busy) return; busy = true;
+		var ov = document.createElement('div'); ov.className = 'pxo note';
+		var paper = document.createElement('div'); paper.className = 'paper';
+		paper.appendChild(paperSVG());
+		var pt = document.createElement('div'); pt.className = 'ptext';
+		var title = document.createElement('div'); title.className = 'ptitle'; title.textContent = '— NOTA —';
+		var body = document.createElement('div'); body.className = 'pbody';
+		var comp = document.createElement('div'); comp.className = 'pcompass'; comp.appendChild(compassSVG());
+		comp.style.visibility = 'hidden';
+		pt.appendChild(title); pt.appendChild(body); pt.appendChild(comp);
+		paper.appendChild(pt);
+		var hint = document.createElement('div'); hint.className = 'hint'; hint.textContent = 'PULSA PARA CERRAR'; hint.style.visibility = 'hidden';
+		ov.appendChild(paper); ov.appendChild(hint);
+		document.body.appendChild(ov);
+		requestAnimationFrame(function () { ov.classList.add('show'); });
+
+		var i = 0, done = false, timer = null;
+		function finish() { done = true; clearInterval(timer); body.textContent = NOTE; comp.style.visibility = 'visible'; hint.style.visibility = 'visible'; }
+		setTimeout(function () {
+			timer = setInterval(function () { i++; body.textContent = NOTE.slice(0, i); if (i >= NOTE.length) finish(); }, 45);
+		}, 600);
+		var unlock;
+		function press() {
+			if (!done) { finish(); return; }
+			unlock(); ov.classList.remove('show'); setVar('NoteMido', 2);
+			setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); busy = false; }, 400);
+		}
+		unlock = lockInput(press);
+		ov.addEventListener('pointerdown', function (e) { e.preventDefault(); press(); });
+	}
+
+	// ───────── Game Over ─────────
+	var G = {
+		G: ['.XXXX', 'X....', 'X....', 'X.XXX', 'X...X', 'X...X', '.XXXX'], A: ['.XXX.', 'X...X', 'X...X', 'XXXXX', 'X...X', 'X...X', 'X...X'],
+		M: ['X...X', 'XX.XX', 'X.X.X', 'X.X.X', 'X...X', 'X...X', 'X...X'], E: ['XXXXX', 'X....', 'X....', 'XXXX.', 'X....', 'X....', 'XXXXX'],
+		O: ['.XXX.', 'X...X', 'X...X', 'X...X', 'X...X', 'X...X', '.XXX.'], V: ['X...X', 'X...X', 'X...X', 'X...X', 'X...X', '.X.X.', '..X..'],
+		R: ['XXXX.', 'X...X', 'X...X', 'XXXX.', 'X.X..', 'X..X.', 'X...X']
+	};
+	function overSVG() {
+		var str = 'GAME OVER', px = [], x = 0, svg = el('svg', { viewBox: '0 0 56 17', 'aria-hidden': 'true' });
+		for (var k = 0; k < str.length; k++) {
+			var ch = str[k]; if (ch === ' ') { x += 4; continue; }
+			for (var r = 0; r < 7; r++) for (var c = 0; c < 5; c++) if (G[ch][r][c] === 'X') px.push([x + c, r]);
+			x += 6;
+		}
+		var w = x - 1, ox = (56 - w) / 2, oy = 5;
+		var defs = el('defs', {}, svg), g = el('linearGradient', { id: 'goG', gradientUnits: 'userSpaceOnUse', x1: 0, y1: oy, x2: 0, y2: oy + 7 }, defs);
+		[['0', '#ff9a8a'], ['.5', '#e0302f'], ['1', '#7d0f1c']].forEach(function (s) { el('stop', { offset: s[0], 'stop-color': s[1] }, g); });
+		px.forEach(function (p) { for (var dx = -1; dx <= 1; dx++) for (var dy = -1; dy <= 1; dy++) if (dx || dy) rect(svg, ox + p[0] + dx, oy + p[1] + dy, 1, 1, '#2a0508'); });
+		px.forEach(function (p) { rect(svg, ox + p[0], oy + p[1], 1, 1, 'url(#goG)'); });
+		return svg;
+	}
+	function showGameOver(who) {
+		if (busy) return; busy = true;
+		var ov = document.createElement('div'); ov.className = 'pxo over';
+		var logo = document.createElement('div'); logo.className = 'gologo'; logo.appendChild(overSVG());
+		var sub = document.createElement('div'); sub.className = 'gosub'; sub.textContent = who === 2 ? 'Ganon te ha derrotado.' : (who === 1 ? 'Mido te ha derrotado.' : 'Te has quedado sin vidas.');
+		var hint = document.createElement('div'); hint.className = 'hint'; hint.textContent = 'PULSA PARA REINTENTAR';
+		ov.appendChild(logo); ov.appendChild(sub); ov.appendChild(hint);
+		document.body.appendChild(ov);
+		requestAnimationFrame(function () { ov.classList.add('show'); });
+		var armed = false; setTimeout(function () { armed = true; }, 900);
+		function restart() { if (!armed) return; location.reload(); }
+		lockInput(restart);
+		ov.addEventListener('pointerdown', function (e) { e.preventDefault(); restart(); });
+	}
+
+	setInterval(function () {
+		if (busy) return;
+		var go = readVar('GameOver');
+		if (go === 1 || go === 2) {
+			// El guion va por delante de la pantalla: esperamos a que se vea la página
+			// "¡Te has quedado sin vidas!" y a que el jugador pulse una vez más.
+			if (!dying) {
+				var t = pageText();
+				if (t.indexOf('sin vidas') !== -1) {
+					dying = true;
+					setTimeout(function () {
+						var offKey, offPtr;
+						var fire = function () { offKey(); offPtr(); showGameOver(go); };
+						offKey = lockInput(fire);
+						offPtr = pointerArm(fire);
+					}, 500);
+				}
+			}
+			return;
+		}
+		if (window.isDialogMode) return;
+		if (readVar('NoteMido') === 1) showNote();
+	}, 150);
 })();
 </script>
 </body>
