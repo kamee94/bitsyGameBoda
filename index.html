@@ -973,7 +973,7 @@ Tu vida actual es {say {LinkHP}}
 }{
   - LinkHP <= 0 ?
     ¡Te has quedado sin vidas!{p}{GameOver = 2}
-} Tu vida actual es {say {LinkHP}}
+}
 De momento vas muy bien, pero aún queda mucho por hacer.
 {p}--- PREGUNTA 4 de 10 ---
 ¿Dónde se fueron a vivir juntos?{p}
@@ -1011,8 +1011,8 @@ De momento vas muy bien, pero aún queda mucho por hacer.
 }{
   - LinkHP <= 0 ?
     ¡Te has quedado sin vidas!{p}{GameOver = 2}
-}--- PREGUNTA 6 de 10 ---
-Ya va quedando menos, aumentamos la dificultad.
+}Ya va quedando menos, aumentamos la dificultad.
+--- PREGUNTA 6 de 10 ---
 ¿Cuáles son sus galletas favoritas?{p}
 {choice
   - Galletas Principe
@@ -1104,7 +1104,7 @@ Ya va quedando menos, aumentamos la dificultad.
     ¡Te has quedado sin vidas!{p}{GameOver = 2}
 }{
   - LinkHP > 0 ?
-    ¡TRIFUERZA RESTAURADA!{p}MEMORIES RESTORED{p}Has recuperado nuestra historia.{p}Pero esta aventura todavía no ha terminado...{p}El siguiente recuerdo te espera en el Mas del Silenci.{p}¡Nos vemos en la boda el 29/05/2026!{GameWin = 1}
+    ¡TRIFUERZA RESTAURADA!{p}MEMORIES RESTORED{p}Has recuperado nuestra historia.{p}Pero esta aventura todavía no ha terminado...{p}El siguiente recuerdo te espera en el Mas del Silenci el 29/05/2027!{GameWin = 1}
   - else ?
     Has muerto... Aún no eres digno de asistir a la boda. Prueba otra vez!{GameOver = 2}
 }
