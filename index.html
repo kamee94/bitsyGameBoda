@@ -1110,7 +1110,7 @@ Ya va quedando menos, aumentamos la dificultad.
     ¡Te has quedado sin vidas!{p}{GameOver = 2}
 }{
   - LinkHP > 0 ?
-    ¡TRIFUERZA RESTAURADA!{p}MEMORIES RESTORED{p}Has recuperado nuestra historia.{p}Pero esta aventura todavía no ha terminado...{p}El siguiente recuerdo te espera en el Mas del Silenci.{p}¡Nos vemos en la boda el 29/05/2026!{GameWin = 1}
+    ...¡NO PUEDE SER! ¡AAARGH!{GameWin = 1}
   - else ?
     Has muerto... Aún no eres digno de asistir a la boda. Prueba otra vez!{GameOver = 2}
 }
@@ -14712,6 +14712,7 @@ exports.hackOptions = hackOptions;
 	// ── CONFIGURA AQUÍ ──
 	var SONG_MAIN  = 'zelda_main.mp3';   // canción para salas 0-5
 	var SONG_FINAL = 'zelda_final.mp3';  // canción para la última sala
+	var SONG_VICTORY = 'zelda_victoria.mp3'; // al derrotar a Ganon (sigue hasta el final)
 	var FINAL_ROOM = '6';               // ID de la Cueva de Ganon
 	var VOLUME     = 0.5;               // volumen 0.0 – 1.0
 	// ─────────────────────
@@ -14726,6 +14727,7 @@ exports.hackOptions = hackOptions;
 	audioFinal.volume = 0;
 
 	var current  = null;
+	var victory  = false;
 	var unlocked = false;   // el navegador ya permite reproducir
 	var lastRoom = null;
 	var fadeTimer = null;
@@ -14775,8 +14777,26 @@ exports.hackOptions = hackOptions;
 		window.addEventListener(ev, unlock, true);
 	});
 
+	// Victoria: baja la música actual y suena zelda_victoria.mp3 hasta el final del juego.
+	window.__playVictory = function () {
+		if (victory) return; victory = true;
+		clearInterval(fadeTimer);
+		var old = current, v = new Audio(SONG_VICTORY);
+		v.loop = true; v.volume = 0;
+		var t0 = Date.now(), started = false;
+		var tick = setInterval(function () {
+			var k = Math.min(1, (Date.now() - t0) / 900);
+			if (old) old.volume = Math.max(0, VOLUME * (1 - k));
+			v.volume = Math.min(1, VOLUME * 1.1 * k);
+			if (k >= 1) { clearInterval(tick); if (old) old.pause(); }
+		}, 40);
+		var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+		window.__victoryAudio = v;
+	};
+
 	// Comprueba el cambio de sala cada 300 ms.
 	setInterval(function () {
+		if (victory) return;
 		if (typeof state === 'undefined' || state.room == null) return;
 		if (state.room !== lastRoom) {
 			lastRoom = state.room;
@@ -15636,7 +15656,223 @@ exports.hackOptions = hackOptions;
 	}
 	var block = function (e) { if (!started) return; e.stopImmediatePropagation(); e.preventDefault(); };
 	['keydown', 'keyup'].forEach(function (t) { window.addEventListener(t, block, true); });
-	setInterval(function () { if (!started && !window.isDialogMode && readVar('GameWin') === 1) start(); }, 200);
+	window.__finaleStart = function () { if (!started) start(); };
+})();
+</script>
+
+<style>
+#vic { position: fixed; inset: 0; z-index: 1210; display: none; overflow: hidden; font-family: 'Press Start 2P', 'Courier New', monospace; user-select: none; -webkit-user-select: none; touch-action: none; }
+#vic .dim { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, #2a1250 0%, #07040f 75%); opacity: 0; transition: opacity 1.2s ease; }
+#vic .dim.on { opacity: .96; }
+#vic .flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+#vic .flash.go { animation: vFlash .9s ease-out; }
+@keyframes vFlash { 0% { opacity: 1; } 100% { opacity: 0; } }
+#vic .flash.long { animation: vFlashL 1.8s ease-in forwards; background: radial-gradient(circle, #fff 0%, #ffe48a 60%, #ffcc33 100%); }
+@keyframes vFlashL { 0% { opacity: 0; } 70% { opacity: 1; } 100% { opacity: 1; } }
+#vic .p { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; pointer-events: none; will-change: transform, opacity; }
+#vic .title { position: absolute; left: 0; right: 0; top: 38%; transform: translateY(-50%); text-align: center; line-height: 1.5; opacity: 0;
+	font-size: clamp(20px, 7vmin, 56px); color: #ff5a44; letter-spacing: .06em;
+	text-shadow: 0 .09em 0 #5a0f0a, .07em 0 0 #5a0f0a, -.07em 0 0 #5a0f0a, 0 -.07em 0 #5a0f0a, 0 .2em 0 #230404; }
+#vic .title.in { animation: vSlam .7s cubic-bezier(.2,1.6,.4,1) forwards, vShake .5s steps(2) .7s 3; }
+#vic .title.out { opacity: 0; transition: opacity .8s; animation: none; }
+@keyframes vSlam { 0% { opacity: 0; transform: translateY(-50%) scale(3); } 100% { opacity: 1; transform: translateY(-50%) scale(1); } }
+@keyframes vShake { 0% { margin-left: -6px; } 100% { margin-left: 6px; } }
+#vic .stage { position: absolute; left: 50%; top: 42%; width: min(74vw, 46vh, 440px); aspect-ratio: 48 / 42; transform: translate(-50%, -50%); opacity: 0; transition: opacity 1s; }
+#vic .stage.on { opacity: 1; }
+#vic .rays { position: absolute; left: 50%; top: 52%; width: 230%; aspect-ratio: 1; transform: translate(-50%, -50%); opacity: 0; transition: opacity 1.6s;
+	background: repeating-conic-gradient(from 0deg, rgba(255,214,90,.55) 0deg 7deg, rgba(255,214,90,0) 7deg 22deg);
+	-webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%); mask-image: radial-gradient(circle, #000 0%, transparent 62%); animation: vSpin 24s linear infinite; }
+#vic .rays.on { opacity: 1; }
+@keyframes vSpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+#vic .halo { position: absolute; left: 50%; top: 52%; width: 150%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; opacity: 0; transition: opacity 1.2s;
+	background: radial-gradient(circle, rgba(255,230,120,.95) 0%, rgba(255,200,60,.45) 35%, rgba(255,200,60,0) 68%); }
+#vic .halo.on { opacity: 1; animation: vPulse 2.2s ease-in-out infinite; }
+@keyframes vPulse { 0%, 100% { transform: translate(-50%, -50%) scale(.92); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
+#vic svg.tri { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; shape-rendering: crispEdges; }
+#vic svg.tri .pc { transition: opacity .35s, transform .6s cubic-bezier(.2,1.4,.4,1), filter .5s; transform-box: fill-box; transform-origin: center; }
+#vic svg.tri .ghost { opacity: .35; filter: grayscale(1) brightness(.5); }
+#vic svg.tri .lit { filter: drop-shadow(0 0 1.2px #ffe48a) drop-shadow(0 0 3px #ffcc33); }
+#vic svg.tri .pop { animation: vPop .7s cubic-bezier(.2,1.6,.4,1); }
+@keyframes vPop { 0% { transform: scale(.2); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+#vic .whole { animation: vBob 2.8s ease-in-out infinite; }
+@keyframes vBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5%); } }
+#vic .names { position: absolute; left: 0; right: 0; top: calc(42% + min(37vw, 23vh, 220px) + 3vmin); text-align: center; color: #ffe9a8; font-size: clamp(8px, 1.9vmin, 15px); letter-spacing: .1em; opacity: 0; transition: opacity 1s; text-shadow: 0 .2em 0 #3a2305; }
+#vic .names.on { opacity: 1; }
+#vic .get { position: absolute; left: 0; right: 0; bottom: 14vh; text-align: center; padding: 0 5vw; color: #fff3c9; font-size: clamp(12px, 3.3vmin, 28px); line-height: 1.7; letter-spacing: .04em; min-height: 3.4em;
+	text-shadow: 0 .14em 0 #6a4208, .07em 0 0 #6a4208, -.07em 0 0 #6a4208, 0 .3em 0 #2a1a05; }
+#vic .sub { position: absolute; left: 0; right: 0; bottom: 8vh; text-align: center; color: #ffcc33; font-size: clamp(9px, 2.2vmin, 18px); letter-spacing: .18em; opacity: 0; transition: opacity 1s; text-shadow: 0 .2em 0 #3a2305; }
+#vic .sub.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { #vic .rays, #vic .halo.on, #vic .whole { animation: none; } }
+</style>
+<div id="vic" aria-hidden="true">
+	<div class="dim"></div>
+	<div class="title">¡GANON<br>DERROTADO!</div>
+	<div class="stage"><div class="rays"></div><div class="halo"></div><svg class="tri" viewBox="0 0 48 42"></svg></div>
+	<div class="names">PODER · SABIDURÍA · CORAJE</div>
+	<div class="get"></div>
+	<div class="sub">MEMORIES RESTORED</div>
+	<div class="flash"></div>
+</div>
+<script>
+/* ═════ Victoria sobre Ganon: cinemática + música + paso a la pantalla final ═════ */
+(function () {
+	var vic = document.getElementById('vic');
+	if (!vic) return;
+	var q = function (s) { return vic.querySelector(s); };
+	var started = false, T = [];
+	var dim = q('.dim'), flash = q('.flash'), title = q('.title'), stage = q('.stage'), rays = q('.rays'), halo = q('.halo'),
+		svg = q('svg.tri'), names = q('.names'), get = q('.get'), sub = q('.sub');
+	var NS = 'http://www.w3.org/2000/svg';
+
+	function readVar(n) { try { var si = window.scriptInterpreter; if (si && si.HasVariable(n)) return parseInt(si.GetVariable(n), 10); } catch (e) {} return null; }
+	function at(ms, fn) { T.push(setTimeout(fn, ms)); }
+
+	// Triforce pixel-art: 3 triangulitos (arriba=Poder, izquierda=Sabiduría, derecha=Coraje)
+	var pieces = {};
+	function tri(cx, top, h, cls) {
+		var g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'pc ' + cls);
+		for (var r = 0; r < h; r++) {
+			var w = 2 * r + 2, x = cx - (r + 1), y = top + r;
+			var rect = function (xx, ww, f) { var e = document.createElementNS(NS, 'rect'); e.setAttribute('x', xx); e.setAttribute('y', y); e.setAttribute('width', ww); e.setAttribute('height', 1); e.setAttribute('fill', f); g.appendChild(e); };
+			rect(x - 1, w + 2, '#5a3a05');                      // contorno
+			rect(x, w, r % 4 === 3 ? '#f0b90f' : '#ffd23a');     // cuerpo
+			rect(x, 1, '#fff0a8');                               // brillo izq.
+			rect(x + w - 1, 1, '#c98d0d');                       // sombra der.
+		}
+		var base = document.createElementNS(NS, 'rect');
+		base.setAttribute('x', cx - h - 1); base.setAttribute('y', top + h); base.setAttribute('width', 2 * h + 2); base.setAttribute('height', 1); base.setAttribute('fill', '#5a3a05'); g.appendChild(base);
+		svg.appendChild(g); return g;
+	}
+	pieces.top = tri(24, 0, 12, 'ghost');
+	pieces.left = tri(12, 14, 12, 'ghost');
+	pieces.right = tri(36, 14, 12, 'ghost');
+	svg.style.transformOrigin = '50% 50%';
+
+	// Partículas de píxeles
+	function burst(x, y, n, colors, spread, dur, up) {
+		for (var i = 0; i < n; i++) {
+			var d = document.createElement('i'); d.className = 'p';
+			d.style.left = x + 'px'; d.style.top = y + 'px';
+			d.style.background = colors[(Math.random() * colors.length) | 0];
+			var sz = 4 + ((Math.random() * 3) | 0) * 3; d.style.width = d.style.height = sz + 'px';
+			vic.appendChild(d);
+			var a = Math.random() * Math.PI * 2, r = spread * (.3 + Math.random() * .7);
+			var dx = Math.cos(a) * r, dy = Math.sin(a) * r - (up || 0);
+			d.animate([{ transform: 'translate(0,0)', opacity: 1 }, { transform: 'translate(' + dx + 'px,' + dy + 'px)', opacity: 0 }],
+				{ duration: dur * (.7 + Math.random() * .6), easing: 'cubic-bezier(.1,.7,.3,1)', fill: 'forwards' });
+			(function (e) { setTimeout(function () { e.remove(); }, dur * 1.4 + 100); })(d);
+		}
+	}
+	// Chispas doradas que suben continuamente
+	var sparkTimer = null;
+	function sparks(on) {
+		clearInterval(sparkTimer);
+		if (!on) return;
+		sparkTimer = setInterval(function () {
+			for (var i = 0; i < 2; i++) {
+				var d = document.createElement('i'); d.className = 'p';
+				var sz = 4 + ((Math.random() * 3) | 0) * 2; d.style.width = d.style.height = sz + 'px';
+				d.style.left = (Math.random() * 100) + '%'; d.style.top = (70 + Math.random() * 30) + '%';
+				d.style.background = Math.random() < .5 ? '#ffe48a' : '#ffcc33';
+				vic.insertBefore(d, flash);
+				d.animate([{ transform: 'translateY(0)', opacity: 0 }, { opacity: 1, offset: .2 }, { transform: 'translateY(-55vh)', opacity: 0 }], { duration: 3500 + Math.random() * 2500, easing: 'linear' });
+				(function (e) { setTimeout(function () { e.remove(); }, 6200); })(d);
+			}
+		}, 140);
+	}
+
+	function type(el, text, speed, done) {
+		var i = 0; el.textContent = '';
+		var t = setInterval(function () { el.textContent = text.slice(0, ++i); if (i >= text.length) { clearInterval(t); if (done) done(); } }, speed);
+	}
+
+	var shaking = null;
+	function shake(on) {
+		var cv = document.getElementById('game'); if (!cv) return;
+		clearInterval(shaking); cv.style.transform = '';
+		if (!on) return;
+		shaking = setInterval(function () { cv.style.transform = 'translate(' + ((Math.random() * 14 - 7) | 0) + 'px,' + ((Math.random() * 10 - 5) | 0) + 'px)'; }, 50);
+	}
+
+	function ganonXY() {
+		var cv = document.getElementById('game'), r = cv.getBoundingClientRect(), g = window.sprite && window.sprite['e'];
+		var tx = g ? g.x : 12, ty = g ? g.y : 7;
+		return { x: r.left + (tx + .5) * r.width / 16, y: r.top + (ty + .5) * r.height / 16, g: g };
+	}
+
+	function setGanonVisible(v) {
+		try {
+			var g = window.sprite['e']; if (!g) return;
+			if (v) g.room = '6'; else g.room = null;
+			drawRoom(room[state.room], { redrawAll: true });
+		} catch (e) {}
+	}
+
+	function block(e) { e.stopImmediatePropagation(); e.preventDefault(); }
+
+	function start() {
+		if (started) return; started = true;
+		['keydown', 'keyup'].forEach(function (t) { window.addEventListener(t, block, true); });
+		vic.style.display = 'block';
+		if (window.__playVictory) window.__playVictory();
+		var gp = ganonXY();
+
+		// 1) Golpe final: Ganon parpadea, la pantalla tiembla
+		shake(true);
+		var blinks = 0, bl = setInterval(function () { setGanonVisible(blinks % 2 === 1); if (++blinks > 8) { clearInterval(bl); } }, 130);
+		at(1200, function () {
+			setGanonVisible(false);
+			flash.classList.add('go');
+			burst(gp.x, gp.y, 90, ['#8a1fd1', '#c03bff', '#ff4b3a', '#ffb347', '#2a0a3d', '#fff'], Math.max(vic.clientWidth, 300) * .45, 1700, 40);
+			dim.classList.add('on');
+		});
+		at(1900, function () { shake(false); title.classList.add('in'); });
+		at(3000, function () { burst(gp.x, gp.y, 40, ['#c03bff', '#ff4b3a', '#fff'], 220, 1500, 80); });
+
+		// 2) La Trifuerza: dos fragmentos ya son tuyos, el tercero llega desde Ganon
+		at(4900, function () {
+			title.classList.add('out');
+			stage.classList.add('on'); sparks(true);
+			pieces.left.setAttribute('class', 'pc lit'); pieces.right.setAttribute('class', 'pc lit');
+			pieces.left.classList.add('pop'); pieces.right.classList.add('pop');
+		});
+		at(6200, function () {
+			// energía que viaja de Ganon al hueco superior
+			var sr = svg.getBoundingClientRect(), tx = sr.left + sr.width * .5, ty = sr.top + sr.height * .15;
+			var orb = document.createElement('i'); orb.className = 'p';
+			orb.style.cssText = 'width:22px;height:22px;margin:-11px 0 0 -11px;background:#c03bff;box-shadow:0 0 20px 8px #c03bff,0 0 40px 18px rgba(255,75,58,.6);left:' + gp.x + 'px;top:' + gp.y + 'px';
+			vic.insertBefore(orb, flash);
+			orb.animate([{ transform: 'translate(0,0)', background: '#c03bff' }, { transform: 'translate(' + (tx - gp.x) + 'px,' + (ty - gp.y) + 'px)', background: '#ffe48a' }], { duration: 1100, easing: 'cubic-bezier(.5,0,.3,1)', fill: 'forwards' });
+			at(1100, function () {
+				orb.remove();
+				burst(tx, ty, 50, ['#ffe48a', '#ffcc33', '#fff'], 170, 1300);
+				pieces.top.setAttribute('class', 'pc lit'); pieces.top.classList.add('pop');
+				flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+			});
+		});
+		at(7700, function () {
+			rays.classList.add('on'); halo.classList.add('on');
+			svg.classList.add('whole'); names.classList.add('on');
+			type(get, '¡HAS OBTENIDO LA TRIFUERZA!', 70);
+		});
+		at(10300, function () { sub.classList.add('on'); });
+
+		// 3) Destello final → pantalla del logo y la fecha
+		at(14200, function () { flash.className = 'flash long'; });
+		at(16200, function () {
+			if (window.__finaleStart) window.__finaleStart();
+			setTimeout(function () {
+				vic.style.transition = 'opacity 1.2s'; vic.style.opacity = '0'; sparks(false);
+				setTimeout(function () { vic.style.display = 'none'; }, 1400);
+			}, 400);
+		});
+	}
+
+	window.__victoryStart = start;
+	setInterval(function () {
+		if (started || window.isDialogMode) return;
+		if (readVar('GameWin') === 1) start();
+	}, 150);
 })();
 </script>
 </body>
