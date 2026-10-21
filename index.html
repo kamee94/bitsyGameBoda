@@ -811,6 +811,7 @@ DLG 7
 {MidoTalked = 1}¡Alto ahí, viajero!{p}
 Soy Mido, guardian del bosque.
 ¿Quién te ha dejado entrar en el bosque?
+...
 ¿Vienes a recuperar los recuerdos de dos aventureros?
 Si quieres avanzar, tendrás que demostrar que conoces su historia.
 Te haré 3 sencillas preguntas.
@@ -15699,6 +15700,10 @@ exports.hackOptions = hackOptions;
 #vic .names.on { opacity: 1; }
 #vic .get { position: absolute; left: 0; right: 0; bottom: 14vh; text-align: center; padding: 0 5vw; color: #fff3c9; font-size: clamp(12px, 3.3vmin, 28px); line-height: 1.7; letter-spacing: .04em; min-height: 3.4em;
 	text-shadow: 0 .14em 0 #6a4208, .07em 0 0 #6a4208, -.07em 0 0 #6a4208, 0 .3em 0 #2a1a05; }
+#vic .msg { position: absolute; left: 0; right: 0; bottom: 9vh; padding: 0 6vw; text-align: center; color: #fff3c9; font-size: clamp(11px, 2.9vmin, 24px); line-height: 2; letter-spacing: .03em; opacity: 0; transition: opacity .9s;
+	text-shadow: 0 .14em 0 #6a4208, .07em 0 0 #6a4208, -.07em 0 0 #6a4208, 0 .3em 0 #2a1a05; }
+#vic .msg.on { opacity: 1; }
+#vic .msg .l2 { display: block; margin-top: 1.2em; color: #ffcc33; }
 #vic .sub { position: absolute; left: 0; right: 0; bottom: 8vh; text-align: center; color: #ffcc33; font-size: clamp(9px, 2.2vmin, 18px); letter-spacing: .18em; opacity: 0; transition: opacity 1s; text-shadow: 0 .2em 0 #3a2305; }
 #vic .sub.on { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { #vic .rays, #vic .halo.on, #vic .whole { animation: none; } }
@@ -15710,6 +15715,7 @@ exports.hackOptions = hackOptions;
 	<div class="names">PODER · SABIDURÍA · CORAJE</div>
 	<div class="get"></div>
 	<div class="sub">MEMORIES RESTORED</div>
+	<div class="msg"><span class="l1"></span><span class="l2"></span></div>
 	<div class="flash"></div>
 </div>
 <script>
@@ -15856,9 +15862,18 @@ exports.hackOptions = hackOptions;
 		});
 		at(10300, function () { sub.classList.add('on'); });
 
-		// 3) Destello final → pantalla del logo y la fecha
-		at(14200, function () { flash.className = 'flash long'; });
-		at(16200, function () {
+		// 3) Mensaje: la aventura continúa
+		at(12600, function () { get.style.transition = 'opacity .8s'; get.style.opacity = '0'; sub.classList.remove('on'); });
+		at(13600, function () {
+			var m = q('.msg'); m.classList.add('on');
+			type(q('.msg .l1'), 'Pero esta aventura todavía no ha terminado...', 60, function () {
+				setTimeout(function () { type(q('.msg .l2'), 'El siguiente recuerdo te espera en el Mas del Silenci.', 60); }, 700);
+			});
+		});
+
+		// 4) Destello final → pantalla del logo y la fecha
+		at(23500, function () { flash.className = 'flash long'; });
+		at(25500, function () {
 			if (window.__finaleStart) window.__finaleStart();
 			setTimeout(function () {
 				vic.style.transition = 'opacity 1.2s'; vic.style.opacity = '0'; sparks(false);
