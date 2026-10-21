@@ -819,7 +819,7 @@ Si fallas aunque sea una, no tendrás premio.
     {choice1 = "Escolapies"}
 }Tu respuesta ha sido... {say {choice1}}{
   - choice1 == "Maristas" ?
-    . Correcto! Durante el bachillerato.
+    Correcto! Durante el bachillerato.
   - choice1 == "Escolapies" ?
     . Incorrecto! Empezamos mal...
 }{p}{
@@ -874,16 +874,15 @@ Si fallas aunque sea una, no tendrás premio.
     ¡Te has quedado sin vidas!{p}{GameOver = 1}
 }{
   - {LinkHP} <= 0 ?
-    Has sido derrotado
+    Has sido derrotado.
   - else ?
     {
       - {MidoHP} > 0 ?
-        Mido ha huido del bosque
+        Mido ha huido del bosque.
       - else ?
         {
           - {MidoHP} == 0 ?
-            . Has derrotado a Mido{NoteMido = 1}
-            ...
+            Has derrotado a Mido{NoteMido = 1}
             Hay una nota en el suelo.
           - else ?
             {end}
@@ -15377,6 +15376,14 @@ exports.hackOptions = hackOptions;
 					m.room = null;
 					drawRoom(room[state.room], { redrawAll: true });
 				}
+			}
+			// Mido te corta el paso: la conversación es obligatoria al acercarte
+			var mm = window.sprite['c'];
+			if (mm && mm.room != null && String(state.room) === String(mm.room) && !window.isNarrating &&
+				!document.getElementById('title-screen') &&
+				!(si.HasVariable('MidoTalked') && parseInt(si.GetVariable('MidoTalked'), 10) === 1)) {
+				var pl = player();
+				if (pl && Math.abs(pl.x - mm.x) <= 1 && Math.abs(pl.y - mm.y) <= 1) startSpriteDialog('c');
 			}
 			if (si.HasVariable('FairyTalked') && parseInt(si.GetVariable('FairyTalked'), 10) === 1) {
 				var f = window.sprite['b'];
