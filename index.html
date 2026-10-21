@@ -157,7 +157,7 @@ ROOM 0
 NAME Casa de Link
 ITM 3 5,7
 ITM 4 4,7
-EXT 12,14 1 7,5
+EXT 12,14 1 7,6
 PAL 0
 
 
@@ -179,7 +179,8 @@ y,0,0,z,y,0,z,0,0,0,y,0,0,0,0,0
 0,0,0,0,0,0,0,0,0,0,0,0,y,0,0,0
 0,0,0,0,0,y,0,0,0,0,0,0,z,0,y,y
 NAME Patio
-EXT 15,11 2 0,1
+EXT 15,11 2 1,1
+EXT 7,5 0 12,13
 PAL 1
 
 ROOM 2
@@ -200,8 +201,9 @@ y,0,s,p,s,s,s,s,0,0,r,r,r,0,0,0
 0,0,0,0,0,0,s,p,r,0,0,s,r,r,0,0
 0,0,0,z,0,0,s,p,r,0,0,0,0,0,0,0
 NAME Bosque
-EXT 7,15 3 14,0
-EXT 15,11 4 0,1
+EXT 7,15 3 14,1
+EXT 15,11 4 1,1
+EXT 0,1 1 14,11
 PAL 1
 
 ROOM 3
@@ -223,7 +225,8 @@ ROOM 3
 y,0,0,0,0,0,0,0,0,y,0,y,0,0,0,0
 NAME Claro
 ITM 5 8,9
-EXT 15,9 4 0,11
+EXT 15,9 4 1,11
+EXT 14,0 2 7,14
 PAL 1
 
 ROOM 4
@@ -244,7 +247,9 @@ s,s,t,t,0,0,r,r,r,0,0,t,t,t,0,y
 0,0,r,r,0,0,0,0,0,0,0,r,r,r,0,0
 y,0,0,0,0,0,z,0,0,0,0,0,0,0,0,0
 NAME pueblo
-EXT 11,3 5 12,14
+EXT 11,3 5 12,13
+EXT 0,1 2 14,11
+EXT 0,11 3 14,9
 PAL 0
 
 ROOM 5
@@ -265,7 +270,9 @@ ROOM 5
 0,a,a,a,a,a,a,a,a,a,a,a,b,a,a,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 NAME Casa del Pueblo
+EXT 7,1 6 0,7
 EXT 8,1 6 0,7
+EXT 12,14 4 11,4
 PAL 0
 
 
@@ -674,7 +681,7 @@ nuuuuuun
 ss0000ss
 COL 1
 BGC *
-NAME Alcalde
+NAME Rauru
 DLG a
 POS 5 10,3
 
@@ -9612,6 +9619,19 @@ if (engineFeatureFlags.isTransitionEnabled) {
 }
 
 function movePlayerThroughExit(ext) {
+	// La sala de Ganon exige la Trifuerza del Coraje (Navi) y la de la Sabiduría (Rauru)
+	if (ext.dest && String(ext.dest.room) === '6') {
+		var inv = player().inventory || {};
+		var tieneCoraje = inv['3'] > 0, tieneSabiduria = inv['7'] > 0;
+		if (!tieneCoraje || !tieneSabiduria) {
+			player().y += 1; // te devuelve un paso hacia dentro de la casa
+			var msg = "Una fuerza sellada te cierra el paso.\n";
+			if (!tieneCoraje) msg += "Te falta el fragmento de Navi: la Trifuerza del Coraje.\n";
+			if (!tieneSabiduria) msg += "Te falta el fragmento de Rauru: la Trifuerza de la Sabiduría.\n";
+			startDialog(msg, 'blockedGanon' + (tieneCoraje ? 'C' : '') + (tieneSabiduria ? 'S' : '')); // el motor cachea el guion por id: un id por variante
+			return;
+		}
+	}
 	var GoToDest = function() {
 		if (transition && ext.transition_effect != null) {
 			transition.BeginTransition(
