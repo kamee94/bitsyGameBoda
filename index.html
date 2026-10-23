@@ -811,10 +811,8 @@ DLG 7
 {MidoTalked = 1}¡Alto ahí, viajero!{p}
 Soy Mido, guardian del bosque.
 ¿Quién te ha dejado entrar en el bosque?
-...
 ¿Vienes a recuperar los recuerdos de dos aventureros?
-Si quieres avanzar, tendrás que demostrar que conoces su historia.
-Te haré 3 sencillas preguntas.
+Si quieres avanzar, tendrás que demostrar que conoces su historia. Te haré 3 sencillas preguntas.
 Respóndelas todas bien y quizás te ayude.
 Si fallas aunque sea una, no tendrás premio.
 ¿Estás listo?{p}--- PREGUNTA 1 de 3 ---
@@ -922,9 +920,7 @@ DLG b
 Asi que has llegado, niño.
 La ultima pieza de la Trifuerza esta en mi poder.
 ¿De verdad crees que conoces a los aventureros?
-Demúestralo.
-Tu vida actual es {say {LinkHP}}
-{wvy}MHWAHAHAHA{wvy}
+Demúestralo. {wvy}MHWAHAHAHA{wvy}
 --- PREGUNTA 1 de 10 ---
 ¿Qué año empezaron a salir nuestros aventureros?{p}
 {choice
@@ -979,8 +975,7 @@ Tu vida actual es {say {LinkHP}}
 }{
   - LinkHP <= 0 ?
     ¡Te has quedado sin vidas!{p}{GameOver = 2}
-} Tu vida actual es {say {LinkHP}}
-De momento vas muy bien, pero aún queda mucho por hacer.
+} De momento vas muy bien, pero aún queda mucho por hacer.
 {p}--- PREGUNTA 4 de 10 ---
 ¿Dónde se fueron a vivir juntos?{p}
 {choice
@@ -1075,12 +1070,12 @@ Ya va quedando menos, aumentamos la dificultad.
 }--- PREGUNTA 9 de 10 ---
 ¿Cómo resuelven las situaciones que ninguno de los dos quiere hacer?{p}
 {choice
-  - Jugando al piedra, papel, tijeras
-    {choiceGanon9 = "Jugando al piedra, papel, tijeras"}
+  - Al piedra, papel, tijeras
+    {choiceGanon9 = "Al piedra, papel, tijeras"}
   - Siempre lo acaba haciendo Alex
     {choiceGanon9 = "Siempre lo acaba haciendo Alex"}
 }Tu respuesta ha sido... {say {choiceGanon9}}{
-  - choiceGanon9 == "Jugando al piedra, papel, tijeras" ?
+  - choiceGanon9 == "Al piedra, papel, tijeras" ?
     . Correcto!
   - choiceGanon9 == "Siempre lo acaba haciendo Alex" ?
     . Incorrecto!
