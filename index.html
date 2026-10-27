@@ -15861,14 +15861,12 @@ exports.hackOptions = hackOptions;
 		at(12600, function () { get.style.transition = 'opacity .8s'; get.style.opacity = '0'; sub.classList.remove('on'); });
 		at(13600, function () {
 			var m = q('.msg'); m.classList.add('on');
-			type(q('.msg .l1'), 'Pero esta aventura todavía no ha terminado...', 60, function () {
-				setTimeout(function () { type(q('.msg .l2'), 'El siguiente recuerdo te espera en el Mas del Silenci.', 60); }, 700);
-			});
+			type(q('.msg .l1'), 'Pero esta aventura todavía no ha terminado...', 60);
 		});
 
 		// 4) Destello final → pantalla del logo y la fecha
-		at(23500, function () { flash.className = 'flash long'; });
-		at(25500, function () {
+		at(19000, function () { flash.className = 'flash long'; });
+		at(21000, function () {
 			if (window.__finaleStart) window.__finaleStart();
 			setTimeout(function () {
 				vic.style.transition = 'opacity 1.2s'; vic.style.opacity = '0'; sparks(false);
